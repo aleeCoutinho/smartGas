@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850">
+  <defs>
+    <linearGradient id="top" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e9edf0"/></linearGradient>
+    <linearGradient id="front" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f7f8f9"/><stop offset="1" stop-color="#dce1e5"/></linearGradient>
+    <linearGradient id="side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d7dde2"/><stop offset="1" stop-color="#bfc7ce"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#4c5964" flood-opacity=".18"/></filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 Z" fill="#66737d"/></marker>
+  </defs>
+  <rect width="1200" height="850" fill="#f4f6f7"/>
+  <text x="70" y="72" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#26343d">SAFEGAS — CAIXA EXTERNA</text>
+  <text x="70" y="108" font-family="Arial, sans-serif" font-size="17" fill="#687780">Vista ilustrativa em perspectiva • corpo branco</text>
+  <ellipse cx="602" cy="630" rx="330" ry="65" fill="#cfd5d9" opacity=".35"/>
+  <g filter="url(#shadow)" stroke="#aeb7be" stroke-width="2.2" stroke-linejoin="round">
+    <!-- top -->
+    <path d="M300 290 L650 155 L925 290 L575 430 Z" fill="url(#top)"/>
+    <!-- front face -->
+    <path d="M300 290 L575 430 L575 665 L300 525 Z" fill="url(#front)"/>
+    <!-- right face -->
+    <path d="M575 430 L925 290 L925 525 L575 665 Z" fill="url(#side)"/>
+    <!-- lid seam -->
+    <path d="M300 313 L575 453 L925 313" fill="none" stroke="#c6cdd2" stroke-width="2"/>
+    <!-- subtle lid screws -->
+    <g fill="#c2c9ce" stroke="#a9b2b9" stroke-width="1.5">
+      <circle cx="330" cy="300" r="5"/><circle cx="635" cy="177" r="5"/><circle cx="894" cy="300" r="5"/><circle cx="579" cy="410" r="5"/>
+    </g>
+    <!-- left visible face hose hole -->
+    <ellipse cx="369" cy="466" rx="19" ry="10" transform="rotate(27 369 466)" fill="#7c858b" stroke="#a4adb4" stroke-width="3"/>
+    <ellipse cx="369" cy="466" rx="12" ry="6" transform="rotate(27 369 466)" fill="#30383e" stroke="#59636a" stroke-width="1.5"/>
+    <!-- right face hose hole -->
+    <ellipse cx="786" cy="516" rx="19" ry="10" transform="rotate(-22 786 516)" fill="#7c858b" stroke="#a4adb4" stroke-width="3"/>
+    <ellipse cx="786" cy="516" rx="12" ry="6" transform="rotate(-22 786 516)" fill="#30383e" stroke="#59636a" stroke-width="1.5"/>
+  </g>
+  <!-- labels and leaders -->
+  <g font-family="Arial, sans-serif" fill="#33434d" stroke="#74828b" stroke-width="1.8">
+    <path d="M352 450 L235 392 L150 392" fill="none"/>
+    <circle cx="352" cy="450" r="4" fill="#74828b" stroke="none"/>
+    <path d="M805 505 L944 445 L1022 445" fill="none"/>
+    <circle cx="805" cy="505" r="4" fill="#74828b" stroke="none"/>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#33434d">
+    <text x="75" y="378" font-size="18" font-weight="700">Furo lateral Ø10 mm</text>
+    <text x="75" y="402" font-size="15" fill="#687780">Passagem da mangueira</text>
+    <text x="945" y="420" font-size="18" font-weight="700">Furo lateral Ø10 mm</text>
+    <text x="945" y="444" font-size="15" fill="#687780">Saída da mangueira</text>
+  </g>
+  <!-- dimension lines -->
+  <g fill="none" stroke="#66737d" stroke-width="1.7" marker-start="url(#arrow)" marker-end="url(#arrow)">
+    <path d="M300 710 L575 850" transform="translate(0,-25)"/>
+    <path d="M600 700 L925 570"/>
+    <path d="M970 290 L970 525"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#53616a">
+    <text x="400" y="735" transform="rotate(27 400 735)">150 mm</text>
+    <text x="760" y="660" transform="rotate(-22 760 660)">110 mm</text>
+    <text x="990" y="410">100 mm</text>
+  </g>
+  <text x="70" y="790" font-family="Arial, sans-serif" font-size="15" fill="#7b878f">Representação conceitual baseada nas dimensões informadas; não é um desenho técnico para fabricação.</text>
+</svg>

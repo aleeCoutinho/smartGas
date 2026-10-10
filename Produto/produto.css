@@ -38,6 +38,7 @@
   height: 140px;
   object-fit: contain;
   margin-bottom: var(--space-3);
+  background-color: white;
 }
 
 .item__title {
