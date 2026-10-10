@@ -973,3 +973,51 @@ body:has(dialog[open]) {
     margin-inline: 0;
   }
 }
+
+.modal-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.modal-menu__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-elevated);
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color var(--motion-hover);
+}
+
+.modal-menu__item:hover {
+    background-color: var(--border-subtle);
+}
+
+.modal-menu__item .arrow {
+    font-size: 24px;
+    color: var(--text-muted);
+    line-height: 1;
+}
+
+.btn--outline {
+    width: 100%;
+    padding: 16px;
+    border-radius: 100px;
+    background-color: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color var(--motion-hover);
+}
+
+.btn--outline:hover {
+    background-color: var(--bg-elevated);
+}
