@@ -90,3 +90,59 @@ input:focus {
 .login-link a:hover {
     text-decoration: underline;
 }
+
+.forgot-password {
+    text-align: right;
+    color: var(--brand-primary);
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+#btn-entrar {
+    width: 100%;
+    margin-top: var(--space-4);
+}
+
+.welcome-panel {
+    max-width: 640px;
+    width: 100%;
+    align-items: center;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+}
+
+.eyebrow--success {
+    background: transparent;
+    color: var(--feedback-success);
+    padding: 0;
+    margin-bottom: var(--space-2);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.welcome-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.btn-text {
+    color: var(--brand-primary);
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px;
+    transition: color var(--motion-hover);
+}
+
+.btn-text:hover {
+    filter: brightness(1.2);
+}
