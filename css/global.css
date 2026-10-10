@@ -911,6 +911,18 @@ body:has(dialog[open]) {
 }
 
 @media (max-width: 1080px) {
+  .navbar__inner {
+    gap: var(--space-4);
+  }
+
+  .nav-links {
+    gap: var(--space-3);
+  }
+
+  .nav-links a {
+    font-size: 16px;
+  }
+
   .hero__grid {
     grid-template-columns: 1fr;
   }

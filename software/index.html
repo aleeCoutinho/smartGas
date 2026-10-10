@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Painel local de monitoramento e controle do protótipo Safe Gas" />
+    <title>SmartGás — Painel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/aurora.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="../js/theme.js"></script>
+    <script src="../js/aurora.js" defer></script>
+    <script src="../js/ui.js" defer></script>
+    <script src="../js/conta.js" defer></script>
+  </head>
+  <body data-page="software" id="Smartgas">
+    <div class="aurora" aria-hidden="true">
+      <div class="orb orb--1"></div>
+      <div class="orb orb--2"></div>
+      <div class="orb orb--3"></div>
+      <div class="orb orb--4"></div>
+    </div>
+
+    <div class="page">
+      <header class="navbar" id="navbar">
+        <div class="container navbar__inner">
+          <a class="wordmark" href="../index.html">SmartGas.</a>
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Abrir menu">☰</button>
+          <nav class="nav-links" id="nav-links" aria-label="Navegação principal">
+            <a href="../index.html">Início</a>
+            <a href="../Produto/produto.html">Produto</a>
+            <a href="../Instruções/Instruções.html">Instruções</a>
+            <a href="../Equipe/Equipe.html">Equipe</a>
+            <a href="../Jogo/Jogo.html">Jogo</a>
+            <a href="../Refs/Refs.html">Refs</a>
+            <a href="./index.html" aria-current="page">Painel</a>
+          </nav>
+          <div class="navbar__actions">
+            <button id="account-btn" class="btn--ghost" type="button">Conta</button>
+          </div>
+        </div>
+      </header>
+
+      <dialog class="modal" id="account-modal" aria-labelledby="account-title">
+        <div class="panel account-panel">
+          <span class="eyebrow">SUA CONTA</span>
+          <h2 class="t-h3" id="account-title">Você não está conectado</h2>
+          <p class="t-body-m modal__text">Entre ou crie uma conta para usar o app SmartGás e o jogo The Last Meds.</p>
+          <div class="modal__actions">
+            <a class="btn btn--primary" href="../login.html">Entrar</a>
+            <a class="btn btn--secondary" href="../cadastro.html">Criar conta</a>
+          </div>
+          <div class="modal__theme">
+            <span class="t-caption">Aparência</span>
+            <div class="modal__seg" role="group" aria-label="Escolha de aparência">
+              <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
+              <button type="button" class="modal__opt" data-theme-option="light">Light</button>
+            </div>
+          </div>
+          <button type="button" class="modal__close" data-close-modal>Fechar</button>
+        </div>
+      </dialog>
+
+      <main class="page-shell">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">SMARTGÁS SHIELD</p>
+            <h1 class="t-display">Painel de controle</h1>
+            <p class="subtitle t-body-l">Monitoramento e controle do botijão em tempo real.</p>
+          </div>
+          <div class="connection-group" aria-live="polite">
+            <span id="backend-badge" class="badge neutral">Backend conectando</span>
+            <span id="central-badge" class="badge neutral">Central desconhecida</span>
+            <span id="socket-badge" class="badge neutral">Tempo real desconectado</span>
+          </div>
+        </header>
+      <section id="alert-banner" class="alert-banner hidden" role="alert">
+        <div>
+          <strong id="alert-title">Alerta de vazamento</strong>
+          <p id="alert-message"></p>
+        </div>
+        <button id="banner-ack-button" class="button warning hidden" type="button">Reconhecer alerta</button>
+      </section>
+
+      <section class="section-heading">
+        <div>
+          <p class="eyebrow">Situação atual</p>
+          <h2>Visão geral</h2>
+        </div>
+        <p id="last-update" class="muted">Nenhuma medição recebida</p>
+      </section>
+
+      <section class="summary-grid" aria-label="Resumo da central">
+        <article class="card gas-card">
+          <span class="card-label">Gás restante</span>
+          <strong id="gas-percentage" class="metric">—</strong>
+          <span id="gas-weight" class="metric-detail">— kg disponíveis</span>
+          <div class="progress" aria-label="Porcentagem de gás restante">
+            <div id="gas-progress" class="progress-fill"></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="card-label">Peso total</span>
+          <strong id="total-weight" class="metric">—</strong>
+          <span class="metric-detail">Leitura calibrada do HX711</span>
+        </article>
+
+        <article class="card">
+          <span class="card-label">Válvula</span>
+          <strong id="valve-state" class="metric">Desconhecida</strong>
+          <span class="metric-detail">Estado reportado pelo relé</span>
+        </article>
+
+        <article class="card">
+          <span class="card-label">Sensor MQ-2</span>
+          <strong id="mq2-value" class="metric">—</strong>
+          <span id="leak-state" class="metric-detail">Sem leitura</span>
+        </article>
+
+        <article class="card">
+          <span class="card-label">Comunicação ESP-NOW</span>
+          <strong id="esp2-state" class="metric">—</strong>
+          <span class="metric-detail">ESP2 detector de gás</span>
+        </article>
+      </section>
+
+      <section class="panel valve-panel">
+        <div>
+          <p class="eyebrow">Controle remoto</p>
+          <h2>Válvula de gás</h2>
+          <p id="valve-help" class="muted">Aguardando situação da central.</p>
+        </div>
+        <div class="button-row">
+          <button id="open-valve" class="button success" type="button" disabled>Abrir válvula</button>
+          <button id="close-valve" class="button danger" type="button" disabled>Fechar válvula</button>
+        </div>
+      </section>
+
+      <section class="two-column">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Histórico</p>
+              <h2>Consumo de gás</h2>
+            </div>
+            <div class="segmented" role="group" aria-label="Período do consumo">
+              <button class="period-button active" data-range="day" type="button">Dia</button>
+              <button class="period-button" data-range="week" type="button">Semana</button>
+              <button class="period-button" data-range="month" type="button">Mês</button>
+            </div>
+          </div>
+          <p><strong id="consumption-total" class="section-metric">— kg</strong> consumidos no período</p>
+          <div id="consumption-chart" class="bar-chart empty-state">Nenhum consumo registrado.</div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Balança</p>
+              <h2>Gás restante</h2>
+            </div>
+            <span class="muted">Últimas leituras</span>
+          </div>
+          <div id="gas-history-chart" class="line-chart empty-state">Nenhuma leitura registrada.</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Segurança</p>
+            <h2>Histórico de vazamentos</h2>
+          </div>
+          <button id="refresh-button" class="button secondary" type="button">Atualizar dados</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Início</th><th>Fim</th><th>Duração</th><th>Pico MQ-2</th><th>Situação</th><th>Ação</th></tr>
+            </thead>
+            <tbody id="leaks-table"></tbody>
+          </table>
+        </div>
+        <p id="leaks-empty" class="empty-state hidden">Nenhum vazamento registrado.</p>
+      </section>
+
+      <section class="two-column lower-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Auditoria</p>
+              <h2>Comandos recentes</h2>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Horário</th><th>Comando</th><th>Resultado</th><th>Estado</th></tr></thead>
+              <tbody id="commands-table"></tbody>
+            </table>
+          </div>
+          <p id="commands-empty" class="empty-state hidden">Nenhum comando enviado.</p>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Balança</p>
+              <h2>Configurações</h2>
+            </div>
+          </div>
+          <form id="settings-form" class="settings-form">
+            <label>Tara do botijão (kg)<input id="tare-kg" name="tareKg" type="number" min="0" max="100" step="0.01" required /></label>
+            <label>Capacidade de gás (kg)<input id="capacity-kg" name="capacityKg" type="number" min="0.01" max="100" step="0.01" required /></label>
+            <label>Tolerância de ruído (kg)<input id="noise-kg" name="noiseToleranceKg" type="number" min="0.001" max="5" step="0.001" required /></label>
+            <label>Limite de reposição (kg)<input id="refill-kg" name="refillThresholdKg" type="number" min="0.01" max="20" step="0.01" required /></label>
+            <button class="button primary" type="submit">Salvar configurações</button>
+          </form>
+        </article>
+      </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer__inner">
+          <div class="footer__brand">
+            <span class="wordmark">SmartGas.</span>
+            <p class="t-body-s">Tecnologia IoT para tornar a cozinha mais segura, conectada e inteligente.</p>
+          </div>
+          <nav class="footer__sitemap" aria-label="Mapa do site">
+            <a href="../index.html">Início</a>
+            <a href="../Produto/produto.html">Produto</a>
+            <a href="../Instruções/Instruções.html">Instruções</a>
+            <a href="../Equipe/Equipe.html">Equipe</a>
+            <a href="../Jogo/Jogo.html">Jogo</a>
+            <a href="../Refs/Refs.html">Refs</a>
+          </nav>
+          <span class="footer__meta">TCC SmartGás • SafeStep • 2026</span>
+        </div>
+      </footer>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <script src="./config.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
