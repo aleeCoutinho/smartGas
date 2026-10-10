@@ -1,57 +1,45 @@
-.hero__media {
-    --media-ratio: 640 / 440;
-    --media-fit: contain;
+.validation-container {
+    display: flex;
+    justify-content: center;
 }
 
-.eyebrow-validation {
-    display: block;
-    width: min(675px, 100%);
-    margin-inline: auto;
-    padding: 20px 31px 28px;
-
-    color: var(--brand-on-soft);
-    background: var(--brand-soft);
-
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-card);
-}
-
-.eyebrow-validation__title {
-    font-size: 22px;
-    line-height: 1.3;
-    font-weight: 600;
+.validation-banner {
+    max-width: 800px;
+    background-color: var(--brand-soft);
+    border: none;
     text-align: center;
-    margin: 0 0 var(--space-2);
-}
-
-.eyebrow-validation .t-body-m {
+    padding: var(--space-6);
     color: var(--brand-on-soft);
-    margin: 0;
 }
 
-
-.refs-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-5);
-    margin-top: var(--space-5);
-    width: 100%;
+.validation-banner .t-h4 {
+    color: var(--brand-on-soft);
+    margin-bottom: var(--space-2);
 }
 
-.refs-grid > .card {
-    width: 100%;
-    min-width: 0;
+.validation-banner .t-body-s {
+    color: var(--text-secondary);
 }
 
-
-
-.grid-3 {
-    grid-template-columns: repeat(3, 1fr);
+.pt-0 {
+    padding-top: 0;
 }
 
+.ref-card {
+    justify-content: flex-start;
+}
 
-@media (max-width: 700px) {
-    .refs-grid {
-        grid-template-columns: 1fr;
-    }
+.ref-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    color: var(--text-secondary);
+}
+
+.ref-list li {
+    line-height: 1.5;
+}
+
+.card__icon {
+    font-family: inherit;
 }
