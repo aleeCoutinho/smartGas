@@ -117,7 +117,7 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 
 .bar-chart {
   flex: 0 0 220px; height: 220px; min-height: 220px; max-height: 220px;
-  display: flex; gap: 16px; align-items: flex-end; padding: var(--space-3) 8px 4px;
+  display: flex; justify-content: safe center; gap: 16px; align-items: flex-end; padding: var(--space-3) 8px 4px;
   overflow-x: auto; overflow-y: hidden; scrollbar-color: color-mix(in srgb, var(--brand-primary) 60%, var(--border-subtle)) transparent;
   scrollbar-width: thin;
 }
