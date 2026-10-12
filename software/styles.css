@@ -93,6 +93,10 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
   gap: 3px; padding: 4px; border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill); background: var(--bg-elevated); white-space: nowrap;
 }
+/* .panel-header > div define colunas internas; o seletor de período é uma exceção horizontal. */
+.panel-header > .segmented {
+  align-self: flex-start; flex-direction: row; align-items: center; gap: 3px;
+}
 .period-button {
   flex: 0 0 auto; min-width: 72px; border: 1px solid transparent; border-radius: var(--radius-pill);
   padding: 8px 12px; color: var(--text-secondary); font-size: 13px; line-height: 1.2;
