@@ -130,6 +130,7 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 .line-chart { min-height: 220px; margin-top: var(--space-1); }
 .line-chart svg { width: 100%; height: 220px; overflow: visible; }
 .chart-grid { stroke: var(--border-subtle); stroke-width: 1; }
+.chart-axis-label { fill: var(--text-muted); font-size: 11px; }
 .chart-line { fill: none; stroke: var(--brand-primary); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
 .chart-area { fill: color-mix(in srgb, var(--brand-primary) 12%, transparent); }
 

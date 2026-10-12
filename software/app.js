@@ -285,23 +285,23 @@ function renderGasHistory(readings) {
   state.telemetry = readings;
   const container = byId("gas-history-chart");
   container.replaceChildren();
-  const ordered = [...readings].sort((a, b) => new Date(a.receivedAt) - new Date(b.receivedAt)).slice(-80);
+  const ordered = [...readings].sort((a, b) => new Date(a.receivedAt) - new Date(b.receivedAt)).slice(-240);
   container.classList.toggle("empty-state", ordered.length === 0);
   if (ordered.length === 0) {
     container.textContent = "Nenhuma leitura registrada.";
     return;
   }
 
-  const width = 600;
-  const height = 200;
-  const pad = 16;
+  const width = 760;
+  const height = 250;
+  const pad = { top: 16, right: 18, bottom: 34, left: 46 };
   const values = ordered.map((reading) => reading.gasKg);
   const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = max - min || 1;
+  const max = Math.max(...values, state.status?.settings?.capacityKg ?? 0);
+  const span = max - Math.min(0, min) || 1;
   const points = ordered.map((reading, index) => {
-    const x = pad + (index / Math.max(1, ordered.length - 1)) * (width - pad * 2);
-    const y = height - pad - ((reading.gasKg - min) / span) * (height - pad * 2);
+    const x = pad.left + (index / Math.max(1, ordered.length - 1)) * (width - pad.left - pad.right);
+    const y = height - pad.bottom - ((reading.gasKg - Math.min(0, min)) / span) * (height - pad.top - pad.bottom);
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
   const ns = "http://www.w3.org/2000/svg";
@@ -309,19 +309,36 @@ function renderGasHistory(readings) {
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label", `Histórico de gás restante entre ${numberFormatter.format(min)} e ${numberFormatter.format(max)} kg`);
-  for (const y of [40, 80, 120, 160]) {
+  const gridValues = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.min(max, Math.max(0, max * ratio)));
+  for (const value of gridValues) {
+    const y = height - pad.bottom - (value / span) * (height - pad.top - pad.bottom);
     const line = document.createElementNS(ns, "line");
-    line.setAttribute("x1", "0"); line.setAttribute("x2", String(width)); line.setAttribute("y1", String(y)); line.setAttribute("y2", String(y));
+    line.setAttribute("x1", String(pad.left)); line.setAttribute("x2", String(width - pad.right)); line.setAttribute("y1", String(y)); line.setAttribute("y2", String(y));
     line.setAttribute("class", "chart-grid");
     svg.append(line);
+    const label = document.createElementNS(ns, "text");
+    label.setAttribute("x", String(pad.left - 8)); label.setAttribute("y", String(y + 4));
+    label.setAttribute("text-anchor", "end"); label.setAttribute("class", "chart-axis-label");
+    label.textContent = `${numberFormatter.format(value)} kg`;
+    svg.append(label);
   }
   const area = document.createElementNS(ns, "polygon");
-  area.setAttribute("points", `${pad},${height - pad} ${points.join(" ")} ${width - pad},${height - pad}`);
+  area.setAttribute("points", `${pad.left},${height - pad.bottom} ${points.join(" ")} ${width - pad.right},${height - pad.bottom}`);
   area.setAttribute("class", "chart-area");
   const polyline = document.createElementNS(ns, "polyline");
   polyline.setAttribute("points", points.join(" "));
   polyline.setAttribute("class", "chart-line");
   svg.append(area, polyline);
+  const dateIndexes = [0, Math.floor((ordered.length - 1) / 2), ordered.length - 1];
+  for (const index of dateIndexes) {
+    const [x] = points[index].split(",");
+    const label = document.createElementNS(ns, "text");
+    label.setAttribute("x", x); label.setAttribute("y", String(height - 8));
+    label.setAttribute("text-anchor", index === 0 ? "start" : index === ordered.length - 1 ? "end" : "middle");
+    label.setAttribute("class", "chart-axis-label");
+    label.textContent = shortDateFormatter.format(new Date(ordered[index].receivedAt));
+    svg.append(label);
+  }
   container.append(svg);
 }
 
