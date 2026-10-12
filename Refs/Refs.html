@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGás — Referências</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/aurora.css">
+  <link rel="stylesheet" href="Refs.css">
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/aurora.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+  <script src="../js/conta.js" defer></script>
+</head>
+
+<body data-page="refs" id="Smartgas">
+
+  <div class="aurora" aria-hidden="true">
+    <div class="orb orb--1"></div>
+    <div class="orb orb--2"></div>
+    <div class="orb orb--3"></div>
+    <div class="orb orb--4"></div>
+  </div>
+
+  <div class="page">
+
+    <header class="navbar" id="navbar">
+      <div class="container navbar__inner">
+        <a class="wordmark" href="#Smartgas">SmartGas.</a>
+
+        <button class="nav-toggle" type="button" aria-expanded="false"
+                aria-controls="nav-links" aria-label="Abrir menu">☰</button>
+
+        <nav class="nav-links" id="nav-links" aria-label="Navegação principal">
+          <a href="../index.html">Início</a>
+          <a href="../Produto/produto.html">Produto</a>
+          <a href="../Instruções/Instruções.html">Instruções</a>
+          <a href="../Equipe/Equipe.html">Equipe</a>
+          <a href="../Jogo/Jogo.html">Jogo</a>
+          <a href="./Refs.html" aria-current="page">Refs</a>
+        </nav>
+
+        <div class="navbar__actions">
+          <button id="account-btn" class="btn--ghost" type="button">Conta</button>
+        </div>
+      </div>
+    </header>
+
+    <dialog class="modal" id="account-modal" aria-labelledby="account-title">
+      <div class="panel" id="modal-logged-in" style="display: none;">
+        <span class="eyebrow eyebrow--bare">MINHA CONTA</span>
+        
+        <div style="margin-bottom: 16px; width: 100%;">
+            <h2 class="t-h3" id="account-user-name">Bem-vindo</h2>
+            <p class="t-caption" id="account-user-email" style="margin-top: 4px;">email@exemplo.com</p>
+        </div>
+
+        <div class="modal-menu">
+            <a href="#" class="modal-menu__item">
+                Minha conta
+                <span class="arrow">›</span>
+            </a>
+            <a href="../Jogo/Jogo.html" class="modal-menu__item">
+                Ir para o jogo
+                <span class="arrow">›</span>
+            </a>
+        </div>
+
+        <button type="button" class="btn btn--outline" id="btn-logout">Sair</button>
+
+        <div class="modal__theme" style="width: 100%;">
+          <span class="t-caption">Aparência</span>
+          <div class="modal__seg" role="group" aria-label="Escolha de aparência">
+            <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
+            <button type="button" class="modal__opt" data-theme-option="light">Light</button>
+          </div>
+        </div>
+
+        <button type="button" class="modal__close" data-close-modal>Fechar</button>
+      </div>
+
+      <div class="panel" id="modal-logged-out">
+        <span class="eyebrow">SUA CONTA</span>
+        <h2 class="t-h3" id="account-title">Você não está conectado</h2>
+        <p class="t-body-m modal__text">
+          Entre ou crie uma conta para usar o app SmartGás e o jogo The Last Meds.
+        </p>
+
+        <div class="modal__actions">
+          <a class="btn btn--primary" href="../Login/login.html">Entrar</a>
+          <a class="btn btn--secondary" href="../Cadastro/cadastro.html">Criar conta</a>
+        </div>
+
+        <div class="modal__theme" style="width: 100%;">
+          <span class="t-caption">Aparência</span>
+          <div class="modal__seg" role="group" aria-label="Escolha de aparência">
+            <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
+            <button type="button" class="modal__opt" data-theme-option="light">Light</button>
+          </div>
+        </div>
+
+        <button type="button" class="modal__close" data-close-modal>Fechar</button>
+      </div>
+    </dialog>
+
+    <main>
+      <section class="section hero">
+        <div class="container hero__grid">
+          <div class="hero__copy">
+            <span class="eyebrow">BASE CIENTÍFICA & TÉCNICA</span>
+            <h1 class="t-display">Referências para revisar e aprofundar</h1>
+            <p class="t-body-l">
+              Esta página organiza fundamentos prováveis para o TCC SmartGás. O conteúdo foi preenchido como base inicial e deve ser validado com as fontes oficiais do trabalho.
+            </p>
+            <div class="hero__actions">
+              <a href="#conteudo" class="btn btn--primary">Revisar referências</a>
+              <a href="#metodologia" class="btn btn--secondary">Saiba mais</a>
+            </div>
+          </div>
+          <div class="hero__media">
+            <img src="../assets/img/Refs/Imagem hero.svg"
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="conteudo">
+        <div class="container validation-container">
+          <div class="panel validation-banner">
+            <h3 class="t-h4">Conteúdo para validação</h3>
+            <p class="t-body-s">
+              As referências abaixo foram organizadas como sugestões plausíveis para um projeto de TCC sobre IoT, segurança com GLP, sensores e automação residencial. Substitua ou complemente pelos artigos, normas e livros realmente usados pela equipe.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section pt-0">
+        <div class="container grid-2">
+          
+          <div class="card ref-card">
+            <span class="eyebrow eyebrow--bare">SEGURANÇA E GLP</span>
+            <ul class="ref-list t-body-s">
+              <li>&bull; ABNT NBR 15526 — Redes de distribuição interna para gases combustíveis em instalações residenciais.</li>
+              <li>&bull; Corpo de Bombeiros / normas estaduais — prevenção e resposta a emergências envolvendo gás.</li>
+            </ul>
+          </div>
+
+          <div class="card ref-card">
+            <span class="eyebrow eyebrow--bare">SENSORES E INSTRUMENTAÇÃO</span>
+            <ul class="ref-list t-body-s">
+              <li>&bull; Datasheet MQ-2/MQ-5 — sensores semicondutores para detecção de gases inflamáveis.</li>
+              <li>&bull; HX711 + célula de carga — conversor ADC para medição de peso aplicada ao botijão.</li>
+              <li>&bull; Princípios de calibração de sensores: repetibilidade, sensibilidade, ruído e ambiente de operação.</li>
+            </ul>
+          </div>
+
+          <div class="card ref-card">
+            <span class="eyebrow eyebrow--bare">IOT E AUTOMAÇÃO</span>
+            <ul class="ref-list t-body-s">
+              <li>&bull; ESP8266/ESP32 — conectividade Wi-Fi e comunicação com aplicativos móveis.</li>
+              <li>&bull; Arquiteturas IoT: coleta de dados, processamento local, envio para nuvem e notificações.</li>
+              <li>&bull; Automação residencial segura: atuadores, fail-safe e projeto centrado no usuário.</li>
+            </ul>
+          </div>
+
+          <div class="card ref-card">
+            <span class="eyebrow eyebrow--bare">UX, ACESSIBILIDADE E PRODUTO</span>
+            <ul class="ref-list t-body-s">
+              <li>&bull; Design centrado no usuário para interfaces de monitoramento e alertas críticos.</li>
+              <li>&bull; Boas práticas de usabilidade: linguagem simples, estados claros e feedback imediato.</li>
+              <li>&bull; Acessibilidade visual: contraste, hierarquia tipográfica e leitura em ambientes domésticos.</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="section" id="metodologia">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">METODOLOGIA</span>
+            <h2 class="t-h2">Como transformar essa base em TCC</h2>
+            <p class="t-body-l lede">Sugestão de organização para conectar pesquisa, protótipo e validação técnica.</p>
+          </div>
+
+          <div class="grid-3">
+            <div class="card">
+              <div class="card__icon">1</div>
+              <h3 class="t-h4">1. Pesquisa bibliográfica</h3>
+              <p class="card__body t-body-s">Levantar normas, artigos e materiais técnicos sobre GLP, sensores e automação.</p>
+            </div>
+            
+            <div class="card">
+              <div class="card__icon">2</div>
+              <h3 class="t-h4">2. Prototipagem</h3>
+              <p class="card__body t-body-s">Documentar montagem, componentes, comunicação e fluxo do aplicativo.</p>
+            </div>
+            
+            <div class="card">
+              <div class="card__icon">3</div>
+              <h3 class="t-h4">3. Testes e validação</h3>
+              <p class="card__body t-body-s">Registrar cenários de teste, limites, resultados e melhorias propostas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div class="footer__brand">
+          <span class="wordmark">SmartGas.</span>
+          <p class="t-body-s">
+            Tecnologia IoT para tornar a cozinha mais segura, conectada e inteligente.
+          </p>
+        </div>
+
+        <nav class="footer__sitemap" aria-label="Mapa do site">
+          <a href="../index.html">Início</a>
+          <a href="../Produto/produto.html">Produto</a>
+          <a href="../Instruções/Instruções.html">Instruções</a>
+          <a href="../Equipe/Equipe.html">Equipe</a>
+          <a href="../Jogo/Jogo.html">Jogo</a>
+          <a href="./Refs.html">Refs</a>
+        </nav>
+
+        <span class="footer__meta">TCC SmartGás • SafeStep • 2026</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

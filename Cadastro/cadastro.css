@@ -1,0 +1,148 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+}
+
+.auth-panel {
+    max-width: 480px;
+    width: 100%;
+}
+
+.text-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-5);
+}
+
+#signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.form-group label {
+    margin-bottom: 0;
+}
+
+input {
+    background-color: var(--bg-elevated);
+    border: 1px solid transparent;
+    border-radius: var(--space-2);
+    padding: var(--space-3);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 16px;
+    transition: border-color var(--motion-hover), box-shadow var(--motion-hover);
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 1px var(--brand-primary);
+}
+
+.password-rules {
+    background-color: var(--bg-elevated);
+    border-radius: var(--space-2);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.password-rules ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.password-rules li {
+    margin-bottom: 4px;
+}
+
+#btn-criar-conta {
+    width: 100%;
+    margin-top: var(--space-2);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: var(--space-4);
+}
+
+.login-link a {
+    color: var(--brand-primary);
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password {
+    text-align: right;
+    color: var(--brand-primary);
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+#btn-entrar {
+    width: 100%;
+    margin-top: var(--space-4);
+}
+
+.welcome-panel {
+    max-width: 640px;
+    width: 100%;
+    align-items: center;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+}
+
+.eyebrow--success {
+    background: transparent;
+    color: var(--feedback-success);
+    padding: 0;
+    margin-bottom: var(--space-2);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.welcome-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.btn-text {
+    color: var(--brand-primary);
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px;
+    transition: color var(--motion-hover);
+}
+
+.btn-text:hover {
+    filter: brightness(1.2);
+}
