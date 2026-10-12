@@ -86,6 +86,7 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 .button.secondary { color: var(--brand-on-soft); background: var(--brand-soft); border-color: var(--border-subtle); }
 
 .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: 0; }
+.charts-grid { grid-template-columns: 1fr; }
 .two-column > .panel { height: 430px; min-width: 0; box-sizing: border-box; overflow: hidden; }
 .lower-grid { align-items: start; }
 .section-metric { color: var(--brand-primary); font-size: 26px; }
