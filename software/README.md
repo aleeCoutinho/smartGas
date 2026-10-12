@@ -26,6 +26,7 @@ Edite `config.js` se o backend estiver em outro endereço:
 window.SAFE_GAS_CONFIG = Object.freeze({
   API_BASE_URL: "http://localhost:3000",
   REFRESH_INTERVAL_MS: 30000,
+  SAFETY_RESET_DELAY_MS: 5000,
 });
 ```
 
@@ -36,7 +37,9 @@ Se mudar a porta ou o endereço desta página, ajuste também `CORS_ORIGIN` no `
 - Estado do ESP1, ESP2, válvula e MQ-2.
 - Peso total, gás restante e porcentagem.
 - Abertura e fechamento remoto com regras de segurança.
+- Bloqueio de abertura quando o ESP2 estiver offline ou aquecendo.
 - Alerta e reconhecimento de vazamentos.
+- Contagem regressiva de cinco segundos antes do reconhecimento.
 - Consumo diário, semanal e mensal.
 - Histórico da balança, vazamentos e comandos.
 - Configuração de tara, capacidade e tolerâncias.

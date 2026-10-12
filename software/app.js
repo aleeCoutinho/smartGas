@@ -102,6 +102,13 @@ function renderAlert(status) {
     if (status.unacknowledgedLeak.endedAt) {
       button.classList.remove("hidden");
       button.dataset.leakId = status.unacknowledgedLeak.id;
+      const remaining = safetyCooldownSeconds(status.unacknowledgedLeak);
+      button.disabled = remaining > 0 || !status.esp2Online;
+      button.textContent = !status.esp2Online
+        ? "ESP2 offline"
+        : remaining > 0
+          ? `Aguarde ${remaining}s`
+          : "Reconhecer alerta";
     }
   } else {
     banner.classList.add("hidden");
@@ -114,11 +121,12 @@ function renderValveControls() {
   const status = state.status;
   if (!status) return;
 
-  const openingBlocked = !status.deviceOnline || status.leakActive || Boolean(status.unacknowledgedLeak) || state.commandPending;
+  const openingBlocked = !status.deviceOnline || !status.esp2Online || status.leakActive || Boolean(status.unacknowledgedLeak) || state.commandPending;
   open.disabled = openingBlocked || status.valveState === "OPEN";
   close.disabled = !status.deviceOnline || state.commandPending || status.valveState === "CLOSED";
 
   if (!status.deviceOnline) byId("valve-help").textContent = "A central está offline; nenhum comando pode ser enviado.";
+  else if (!status.esp2Online) byId("valve-help").textContent = "O ESP2 está offline ou aquecendo; a abertura permanece bloqueada.";
   else if (status.leakActive) byId("valve-help").textContent = "A abertura está bloqueada enquanto houver vazamento.";
   else if (status.unacknowledgedLeak) byId("valve-help").textContent = "Reconheça o alerta encerrado antes de abrir.";
   else if (state.commandPending) byId("valve-help").textContent = "Aguardando confirmação do ESP1.";
@@ -176,7 +184,13 @@ function renderLeaks(leaks) {
       button.className = "button secondary acknowledge-button";
       button.type = "button";
       button.dataset.leakId = leak.id;
-      button.textContent = "Reconhecer";
+      const remaining = safetyCooldownSeconds(leak);
+      button.disabled = remaining > 0 || state.status?.esp2Online === false;
+      button.textContent = state.status?.esp2Online === false
+        ? "ESP2 offline"
+        : remaining > 0
+          ? `Aguarde ${remaining}s`
+          : "Reconhecer";
       actionCell.append(button);
     } else actionCell.textContent = "—";
     body.append(row);
@@ -187,6 +201,12 @@ function formatDuration(milliseconds) {
   const seconds = Math.max(0, Math.floor(milliseconds / 1000));
   const minutes = Math.floor(seconds / 60);
   return minutes > 0 ? `${minutes} min ${seconds % 60} s` : `${seconds} s`;
+}
+
+function safetyCooldownSeconds(leak) {
+  if (!leak?.endedAt) return 0;
+  const elapsed = Date.now() - new Date(leak.endedAt).getTime();
+  return Math.max(0, Math.ceil((config.SAFETY_RESET_DELAY_MS - elapsed) / 1000));
 }
 
 function renderCommands(commands) {
@@ -343,6 +363,12 @@ async function sendValveCommand(action) {
 
 async function acknowledgeLeak(leakId) {
   if (!leakId) return;
+  const leak = state.leaks.find((item) => item.id === leakId) ?? state.status?.unacknowledgedLeak;
+  const remaining = safetyCooldownSeconds(leak);
+  if (remaining > 0) {
+    showToast(`Aguarde ${remaining} segundo${remaining === 1 ? "" : "s"} sem vazamento.`, true);
+    return;
+  }
   try {
     await api(`/api/leaks/${leakId}/acknowledge`, { method: "POST" });
     showToast("Reconhecimento enviado ao ESP1.");
@@ -407,3 +433,7 @@ for (const button of document.querySelectorAll(".period-button")) {
 void refreshAll();
 void connectSocket();
 setInterval(() => void refreshAll(), config.REFRESH_INTERVAL_MS);
+setInterval(() => {
+  if (state.status) renderAlert(state.status);
+  if (state.leaks.length) renderLeaks(state.leaks);
+}, 1000);
