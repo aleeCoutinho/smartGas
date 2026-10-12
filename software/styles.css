@@ -89,11 +89,12 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 .lower-grid { align-items: start; }
 .section-metric { color: var(--brand-primary); font-size: 26px; }
 .segmented {
-  display: inline-flex; gap: 3px; padding: 4px; border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-pill); background: var(--bg-elevated);
+  display: inline-flex; flex-direction: row; flex-wrap: nowrap; align-items: center;
+  gap: 3px; padding: 4px; border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill); background: var(--bg-elevated); white-space: nowrap;
 }
 .period-button {
-  min-width: 72px; border: 1px solid transparent; border-radius: var(--radius-pill);
+  flex: 0 0 auto; min-width: 72px; border: 1px solid transparent; border-radius: var(--radius-pill);
   padding: 8px 12px; color: var(--text-secondary); font-size: 13px; line-height: 1.2;
   transition: color var(--motion-hover), background-color var(--motion-hover), border-color var(--motion-hover);
 }
