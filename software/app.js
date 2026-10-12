@@ -28,9 +28,11 @@ const shortDateFormatter = new Intl.DateTimeFormat("pt-BR", {
 const numberFormatter = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
 async function api(path, options = {}) {
+  const headers = { ...options.headers };
+  if (options.body !== undefined) headers["Content-Type"] = "application/json";
   const response = await fetch(`${API}${path}`, {
     ...options,
-    headers: { "Content-Type": "application/json", ...options.headers },
+    headers,
   });
   const contentType = response.headers.get("content-type") ?? "";
   const payload = contentType.includes("application/json") ? await response.json() : null;
