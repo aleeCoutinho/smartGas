@@ -425,7 +425,11 @@ byId("leaks-table").addEventListener("click", (event) => {
 for (const button of document.querySelectorAll(".period-button")) {
   button.addEventListener("click", () => {
     state.consumptionRange = button.dataset.range;
-    document.querySelectorAll(".period-button").forEach((item) => item.classList.toggle("active", item === button));
+    document.querySelectorAll(".period-button").forEach((item) => {
+      const selected = item === button;
+      item.classList.toggle("active", selected);
+      item.setAttribute("aria-pressed", String(selected));
+    });
     void refreshConsumption().catch((error) => showToast(error.message, true));
   });
 }

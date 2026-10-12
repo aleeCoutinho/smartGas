@@ -88,9 +88,20 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: 0; }
 .lower-grid { align-items: start; }
 .section-metric { color: var(--brand-primary); font-size: 26px; }
-.segmented { display: flex; padding: 4px; border-radius: var(--radius-pill); background: var(--bg-elevated); }
-.period-button { border-radius: var(--radius-pill); padding: 8px 12px; color: var(--text-secondary); font-size: 13px; }
-.period-button.active { color: var(--text-on-brand); background: var(--brand-primary); }
+.segmented {
+  display: inline-flex; gap: 3px; padding: 4px; border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill); background: var(--bg-elevated);
+}
+.period-button {
+  min-width: 72px; border: 1px solid transparent; border-radius: var(--radius-pill);
+  padding: 8px 12px; color: var(--text-secondary); font-size: 13px; line-height: 1.2;
+  transition: color var(--motion-hover), background-color var(--motion-hover), border-color var(--motion-hover);
+}
+.period-button:hover:not(.active) { color: var(--text-primary); background: var(--bg-surface); }
+.period-button.active {
+  color: var(--text-on-brand); background: var(--brand-primary);
+  border-color: color-mix(in srgb, var(--brand-primary) 75%, #000);
+}
 
 .bar-chart { height: 220px; display: flex; gap: 7px; align-items: flex-end; padding-top: var(--space-3); overflow-x: auto; }
 .bar-item { min-width: 42px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; }
