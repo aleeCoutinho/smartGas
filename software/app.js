@@ -343,8 +343,12 @@ function renderGasHistory(readings) {
   const height = 250;
   const pad = { top: 16, right: 18, bottom: 34, left: 46 };
   const values = ordered.map((reading) => reading.gasKg);
+  const selectedCylinder = state.cylinderFilter === "active"
+    ? state.cylinders.find((cylinder) => !cylinder.removedAt)
+    : state.cylinders.find((cylinder) => String(cylinder.id) === String(state.cylinderFilter));
+  const selectedCapacity = selectedCylinder?.capacityKg ?? 0;
   const min = Math.min(...values);
-  const max = Math.max(...values, state.status?.settings?.capacityKg ?? 0);
+  const max = Math.max(...values, selectedCapacity);
   const span = max - Math.min(0, min) || 1;
   const points = ordered.map((reading, index) => {
     const x = pad.left + (index / Math.max(1, ordered.length - 1)) * (width - pad.left - pad.right);
