@@ -310,19 +310,32 @@ function renderConsumption(data) {
   }
 
   const maximum = Math.max(...data.buckets.map((bucket) => bucket.consumptionKg), 0.001);
+  const now = Date.now();
+  const currentIndex = data.buckets.findIndex((bucket, index) => {
+    const start = new Date(bucket.start).getTime();
+    const next = index + 1 < data.buckets.length ? new Date(data.buckets[index + 1].start).getTime() : Infinity;
+    return now >= start && now < next;
+  });
+  const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
   const consumptionLabel = (start) => {
     const date = new Date(start);
     if (data.range === "day") {
       return `${new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", hourCycle: "h23" }).format(date)}h`;
     }
     if (data.range === "week") {
-      return new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", weekday: "long" }).format(date);
+      return capitalize(new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", weekday: "long" }).format(date));
     }
     return new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", day: "numeric" }).format(date);
   };
-  for (const bucket of data.buckets) {
+  let currentItem;
+  for (const [index, bucket] of data.buckets.entries()) {
     const item = document.createElement("div");
     item.className = "bar-item";
+    if (index === currentIndex) {
+      item.classList.add("current");
+      item.setAttribute("aria-current", "time");
+      currentItem = item;
+    }
     const value = document.createElement("span");
     value.className = "bar-value";
     value.textContent = `${numberFormatter.format(bucket.consumptionKg)} kg`;
@@ -336,6 +349,7 @@ function renderConsumption(data) {
     item.append(value, bar, label);
     chart.append(item);
   }
+  if (currentItem) requestAnimationFrame(() => currentItem.scrollIntoView({ block: "nearest", inline: "center" }));
 }
 
 function renderGasHistory(readings) {

@@ -127,6 +127,8 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
   scrollbar-width: thin;
 }
 .bar-item { flex: 0 0 64px; min-width: 64px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; }
+.bar-item.current .bar-label, .bar-item.current .bar-value { color: var(--text-primary); font-weight: 700; }
+.bar-item.current .bar { box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-primary) 35%, transparent); filter: brightness(1.18); }
 .bar-chart::-webkit-scrollbar { height: 6px; }
 .bar-chart::-webkit-scrollbar-track { background: transparent; }
 .bar-chart::-webkit-scrollbar-thumb { border-radius: 999px; background: color-mix(in srgb, var(--brand-primary) 60%, var(--border-subtle)); }
