@@ -162,6 +162,31 @@
         <p id="simulation-help" class="muted">Os dados reais continuarão sendo aceitos quando a simulação estiver parada.</p>
       </section>
 
+      <section class="panel cylinder-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Ciclo de uso</p>
+            <h2 id="active-cylinder-title">Botijão atual</h2>
+          </div>
+          <span id="active-cylinder-installed" class="muted">Nenhum ciclo selecionado</span>
+        </div>
+        <div class="cylinder-actions">
+          <label>Peso total do novo botijão (kg)<input id="replacement-weight" type="number" min="0" max="100" step="0.01" /></label>
+          <label>Gás inicial (kg)<input id="replacement-gas" type="number" min="0" max="100" step="0.01" /></label>
+          <button id="replace-cylinder-button" class="button secondary" type="button">Registrar troca</button>
+        </div>
+        <p class="muted">A troca encerra o ciclo atual e inicia o próximo número, preservando os históricos anteriores.</p>
+        <form id="settings-form" class="settings-form cylinder-settings-form">
+          <label>Tara calculada (kg)<input id="tare-kg" name="tareKg" type="number" readonly /></label>
+          <label>Capacidade de gás (kg)<input id="capacity-kg" name="capacityKg" type="number" min="0.01" max="100" step="0.01" required /></label>
+          <label>Gás inicial (kg)<input id="initial-gas-kg" type="number" readonly /></label>
+          <label>Peso total inicial (kg)<input id="initial-weight-kg" type="number" readonly /></label>
+          <label>Tolerância de ruído (kg)<input id="noise-kg" name="noiseToleranceKg" type="number" min="0.001" max="5" step="0.001" required /></label>
+          <label>Limite de reposição (kg)<input id="refill-kg" name="refillThresholdKg" type="number" min="0.01" max="20" step="0.01" required /></label>
+          <button class="button primary" type="submit">Salvar configurações do botijão</button>
+        </form>
+      </section>
+
       <section class="two-column charts-grid">
         <article class="panel">
           <div class="panel-header">
@@ -169,6 +194,7 @@
               <p class="eyebrow">Histórico</p>
               <h2>Consumo de gás</h2>
             </div>
+            <label class="cylinder-filter">Visualizar<select id="cylinder-filter"><option value="active">Botijão atual</option></select></label>
             <div class="segmented" role="group" aria-label="Período do consumo">
               <button class="period-button active" data-range="day" type="button" aria-pressed="true">Dia</button>
               <button class="period-button" data-range="week" type="button" aria-pressed="false">Semana</button>
@@ -227,21 +253,6 @@
           <p id="commands-empty" class="empty-state hidden">Nenhum comando enviado.</p>
         </article>
 
-        <article class="panel">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Balança</p>
-              <h2>Configurações</h2>
-            </div>
-          </div>
-          <form id="settings-form" class="settings-form">
-            <label>Tara do botijão (kg)<input id="tare-kg" name="tareKg" type="number" min="0" max="100" step="0.01" required /></label>
-            <label>Capacidade de gás (kg)<input id="capacity-kg" name="capacityKg" type="number" min="0.01" max="100" step="0.01" required /></label>
-            <label>Tolerância de ruído (kg)<input id="noise-kg" name="noiseToleranceKg" type="number" min="0.001" max="5" step="0.001" required /></label>
-            <label>Limite de reposição (kg)<input id="refill-kg" name="refillThresholdKg" type="number" min="0.01" max="20" step="0.01" required /></label>
-            <button class="button primary" type="submit">Salvar configurações</button>
-          </form>
-        </article>
       </section>
       </main>
 

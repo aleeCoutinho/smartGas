@@ -6,6 +6,8 @@ const state = {
   leaks: [],
   commands: [],
   telemetry: [],
+  cylinders: [],
+  cylinderFilter: "active",
   consumptionRange: "day",
   commandPending: false,
   simulation: { active: false, leakActive: false, weightKg: 0 },
@@ -86,6 +88,39 @@ function renderStatus(status) {
   renderAlert(status);
   renderValveControls();
   renderSimulation();
+}
+
+function renderCylinders(cylinders) {
+  state.cylinders = cylinders;
+  const select = byId("cylinder-filter");
+  const current = state.cylinderFilter;
+  select.replaceChildren();
+  const options = [{ value: "active", label: "Botijão atual" }, { value: "all", label: "Todos os botijões" }, ...cylinders.map((cylinder) => ({ value: String(cylinder.id), label: `Botijão ${cylinder.number}` }))];
+  for (const option of options) {
+    const element = document.createElement("option");
+    element.value = option.value;
+    element.textContent = option.label;
+    select.append(element);
+  }
+  select.value = options.some((option) => option.value === current) ? current : "active";
+  state.cylinderFilter = select.value;
+  const active = cylinders.find((cylinder) => !cylinder.removedAt) ?? cylinders.at(-1);
+  byId("active-cylinder-title").textContent = active ? `Botijão ${active.number}` : "Botijão atual";
+  byId("active-cylinder-installed").textContent = active ? `Instalado em ${formatDate(active.installedAt)}` : "Nenhum ciclo selecionado";
+  if (active) {
+    byId("initial-gas-kg").value = active.initialGasKg ?? "";
+    byId("initial-weight-kg").value = active.initialWeightKg ?? "";
+  }
+  byId("replace-cylinder-button").disabled = !active;
+}
+
+function cylinderQuery() {
+  if (state.cylinderFilter === "all") return "";
+  if (state.cylinderFilter === "active") {
+    const active = state.cylinders.find((cylinder) => !cylinder.removedAt);
+    return active ? `&cylinderId=${active.id}` : "";
+  }
+  return `&cylinderId=${encodeURIComponent(state.cylinderFilter)}`;
 }
 
 function renderSimulation() {
@@ -347,6 +382,8 @@ function fillSettings(settings) {
   if (form.matches(":focus-within")) return;
   byId("tare-kg").value = settings.tareKg;
   byId("capacity-kg").value = settings.capacityKg;
+  byId("initial-gas-kg").value = settings.initialGasKg ?? "";
+  byId("initial-weight-kg").value = settings.initialWeightKg ?? "";
   byId("noise-kg").value = settings.noiseToleranceKg;
   byId("refill-kg").value = settings.refillThresholdKg;
 }
@@ -371,16 +408,18 @@ async function refreshSimulation() {
 }
 
 async function refreshConsumption() {
-  renderConsumption(await api(`/api/gas/consumption?range=${state.consumptionRange}`));
+  const scope = state.cylinderFilter === "all" ? "&scope=all" : "";
+  renderConsumption(await api(`/api/gas/consumption?range=${state.consumptionRange}${scope}${cylinderQuery()}`));
 }
 
 async function refreshAll(showSuccess = false) {
   const jobs = [
     refreshStatus(),
     refreshSimulation(),
-    api("/api/leaks?limit=100").then(renderLeaks),
-    api("/api/valve/commands?limit=100").then(renderCommands),
-    api("/api/gas/history?limit=500").then(renderGasHistory),
+    api("/api/cylinders").then(renderCylinders),
+    api(`/api/leaks?limit=100${cylinderQuery()}`).then(renderLeaks),
+    api(`/api/valve/commands?limit=100${cylinderQuery()}`).then(renderCommands),
+    api(`/api/gas/history?limit=500${cylinderQuery()}`).then(renderGasHistory),
     api("/api/settings").then(fillSettings),
     refreshConsumption(),
   ];
@@ -412,6 +451,27 @@ async function updateSimulation(payload) {
   try {
     state.simulation = await api("/api/simulation/state", { method: "POST", body: JSON.stringify(payload) });
     renderSimulation();
+    await refreshAll();
+  } catch (error) { showToast(error.message, true); }
+}
+
+async function replaceCylinder() {
+  const totalWeightKg = Number(byId("replacement-weight").value);
+  const initialGasKg = Number(byId("replacement-gas").value);
+  if (!Number.isFinite(totalWeightKg) || !Number.isFinite(initialGasKg)) {
+    showToast("Informe o peso total e o gás inicial do novo botijão.", true);
+    return;
+  }
+  if (initialGasKg > totalWeightKg) {
+    showToast("O gás inicial não pode ser maior que o peso total.", true);
+    return;
+  }
+  if (!window.confirm("Confirma a troca do botijão? O ciclo atual será encerrado.")) return;
+  try {
+    await api("/api/cylinders/replace", { method: "POST", body: JSON.stringify({ totalWeightKg, initialGasKg }) });
+    byId("replacement-weight").value = "";
+    byId("replacement-gas").value = "";
+    showToast("Troca de botijão registrada.");
     await refreshAll();
   } catch (error) { showToast(error.message, true); }
 }
@@ -500,6 +560,11 @@ byId("simulation-apply-weight").addEventListener("click", () => {
 });
 byId("simulation-leak-on").addEventListener("click", () => void updateSimulation({ leakActive: true }));
 byId("simulation-leak-off").addEventListener("click", () => void updateSimulation({ leakActive: false }));
+byId("replace-cylinder-button").addEventListener("click", () => void replaceCylinder());
+byId("cylinder-filter").addEventListener("change", (event) => {
+  state.cylinderFilter = event.currentTarget.value;
+  void refreshAll();
+});
 byId("banner-ack-button").addEventListener("click", (event) => void acknowledgeLeak(event.currentTarget.dataset.leakId));
 byId("leaks-table").addEventListener("click", (event) => {
   const button = event.target.closest(".acknowledge-button");
