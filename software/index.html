@@ -194,9 +194,8 @@
           <div class="panel-header">
             <div>
               <p class="eyebrow">Histórico</p>
-              <h2>Consumo de gás</h2>
+              <h2>Consumo acumulado de gás</h2>
             </div>
-            <label class="cylinder-filter">Visualizar<select id="cylinder-filter"><option value="active">Botijão atual</option></select></label>
             <div class="segmented" role="group" aria-label="Período do consumo">
               <button class="period-button active" data-range="day" type="button" aria-pressed="true">Dia</button>
               <button class="period-button" data-range="week" type="button" aria-pressed="false">Semana</button>
@@ -213,7 +212,7 @@
               <p class="eyebrow">Balança</p>
               <h2>Gás restante</h2>
             </div>
-            <span class="muted">Últimas leituras</span>
+            <label class="cylinder-filter">Botijão<select id="cylinder-filter"><option value="active">Botijão atual</option></select></label>
           </div>
           <div id="gas-history-chart" class="line-chart empty-state">Nenhuma leitura registrada.</div>
         </article>

@@ -146,6 +146,11 @@ function cylinderQuery() {
   return `&cylinderId=${encodeURIComponent(state.cylinderFilter)}`;
 }
 
+function activeCylinderQuery() {
+  const active = state.cylinders.find((cylinder) => !cylinder.removedAt);
+  return active ? `&cylinderId=${active.id}` : "";
+}
+
 function renderSimulation() {
   const simulation = state.simulation;
   const active = Boolean(simulation?.active);
@@ -436,19 +441,24 @@ async function refreshSimulation() {
 }
 
 async function refreshConsumption() {
-  const scope = state.cylinderFilter === "all" ? "&scope=all" : "";
-  renderConsumption(await api(`/api/gas/consumption?range=${state.consumptionRange}${scope}${cylinderQuery()}`));
+  renderConsumption(await api(`/api/gas/consumption?range=${state.consumptionRange}&scope=all`));
+}
+
+async function refreshGasHistory() {
+  renderGasHistory(await api(`/api/gas/history?limit=500${activeCylinderQuery()}`));
 }
 
 async function refreshAll(showSuccess = false) {
   const jobs = [
     refreshStatus(),
     refreshSimulation(),
-    api("/api/cylinders").then(renderCylinders),
+    api("/api/cylinders").then((cylinders) => {
+      renderCylinders(cylinders);
+      return refreshGasHistory();
+    }),
     api("/api/cylinders/replacement").then(renderReplacement),
     api(`/api/leaks?limit=100${cylinderQuery()}`).then(renderLeaks),
     api(`/api/valve/commands?limit=100${cylinderQuery()}`).then(renderCommands),
-    api(`/api/gas/history?limit=500${cylinderQuery()}`).then(renderGasHistory),
     api("/api/settings").then(fillSettings),
     refreshConsumption(),
   ];
