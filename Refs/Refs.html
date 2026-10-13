@@ -43,6 +43,7 @@
           <a href="../Equipe/Equipe.html">Equipe</a>
           <a href="../Jogo/Jogo.html">Jogo</a>
           <a href="./Refs.html" aria-current="page">Refs</a>
+          <a href="../software/index.html" data-auth-only>Painel</a>
         </nav>
 
         <div class="navbar__actions">
@@ -51,62 +52,64 @@
       </div>
     </header>
 
-    <dialog class="modal" id="account-modal" aria-labelledby="account-title">
-      <div class="panel" id="modal-logged-in" style="display: none;">
-        <span class="eyebrow eyebrow--bare">MINHA CONTA</span>
-        
-        <div style="margin-bottom: 16px; width: 100%;">
-            <h2 class="t-h3" id="account-user-name">Bem-vindo</h2>
-            <p class="t-caption" id="account-user-email" style="margin-top: 4px;">email@exemplo.com</p>
-        </div>
+  <dialog class="modal" id="account-modal" aria-labelledby="account-title">
+  
+  <div class="panel" id="modal-logged-in" style="display: none;">
+    <span class="eyebrow eyebrow--bare">MINHA CONTA</span>
+    
+    <div style="margin-bottom: 16px; width: 100%;">
+        <h2 class="t-h3" id="account-user-name">Bem-vindo</h2>
+        <p class="t-caption" id="account-user-email" style="margin-top: 4px;">email@exemplo.com</p>
+    </div>
 
-        <div class="modal-menu">
-            <a href="#" class="modal-menu__item">
-                Minha conta
-                <span class="arrow">›</span>
-            </a>
-            <a href="../Jogo/Jogo.html" class="modal-menu__item">
-                Ir para o jogo
-                <span class="arrow">›</span>
-            </a>
-        </div>
+    <div class="modal-menu">
+        <a href="../Login/login-sucesso.html" class="modal-menu__item">
+            Minha conta
+            <span class="arrow">›</span>
+        </a>
+        <a href="../Jogo/Jogo.html" class="modal-menu__item">
+            Ir para o jogo
+            <span class="arrow">›</span>
+        </a>
+    </div>
 
-        <button type="button" class="btn btn--outline" id="btn-logout">Sair</button>
+    <button type="button" class="btn btn--outline" id="btn-logout">Sair</button>
 
-        <div class="modal__theme" style="width: 100%;">
-          <span class="t-caption">Aparência</span>
-          <div class="modal__seg" role="group" aria-label="Escolha de aparência">
-            <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
-            <button type="button" class="modal__opt" data-theme-option="light">Light</button>
-          </div>
-        </div>
-
-        <button type="button" class="modal__close" data-close-modal>Fechar</button>
+    <div class="modal__theme" style="width: 100%;">
+      <span class="t-caption">Aparência</span>
+      <div class="modal__seg" role="group" aria-label="Escolha de aparência">
+        <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
+        <button type="button" class="modal__opt" data-theme-option="light">Light</button>
       </div>
+    </div>
 
-      <div class="panel" id="modal-logged-out">
-        <span class="eyebrow">SUA CONTA</span>
-        <h2 class="t-h3" id="account-title">Você não está conectado</h2>
-        <p class="t-body-m modal__text">
-          Entre ou crie uma conta para usar o app SmartGás e o jogo The Last Meds.
-        </p>
+    <button type="button" class="modal__close" data-close-modal>Fechar</button>
+  </div>
 
-        <div class="modal__actions">
-          <a class="btn btn--primary" href="../Login/login.html">Entrar</a>
-          <a class="btn btn--secondary" href="../Cadastro/cadastro.html">Criar conta</a>
-        </div>
+  <div class="panel" id="modal-logged-out">
+    <span class="eyebrow">SUA CONTA</span>
+    <h2 class="t-h3" id="account-title">Você não está conectado</h2>
+    <p class="t-body-m modal__text">
+      Entre ou crie uma conta para usar o app SmartGás e o jogo The Last Meds.
+    </p>
 
-        <div class="modal__theme" style="width: 100%;">
-          <span class="t-caption">Aparência</span>
-          <div class="modal__seg" role="group" aria-label="Escolha de aparência">
-            <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
-            <button type="button" class="modal__opt" data-theme-option="light">Light</button>
-          </div>
-        </div>
+    <div class="modal__actions">
+      <a class="btn btn--primary" href="../Login/login.html">Entrar</a>
+      <a class="btn btn--secondary" href="../Cadastro/cadastro.html">Criar conta</a>
+    </div>
 
-        <button type="button" class="modal__close" data-close-modal>Fechar</button>
+    <div class="modal__theme" style="width: 100%;">
+      <span class="t-caption">Aparência</span>
+      <div class="modal__seg" role="group" aria-label="Escolha de aparência">
+        <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
+        <button type="button" class="modal__opt" data-theme-option="light">Light</button>
       </div>
-    </dialog>
+    </div>
+
+    <button type="button" class="modal__close" data-close-modal>Fechar</button>
+  </div>
+</dialog>
+
 
     <main>
       <section class="section hero">
@@ -124,6 +127,7 @@
           </div>
           <div class="hero__media">
             <img src="../assets/img/Refs/Imagem hero.svg"
+                 alt="Imagem ilustrativa das referências">
           </div>
         </div>
       </section>

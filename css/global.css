@@ -1033,3 +1033,41 @@ body:has(dialog[open]) {
 .btn--outline:hover {
     background-color: var(--bg-elevated);
 }
+
+
+.modal-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  margin-block: var(--space-3);
+}
+
+.modal-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--space-2);
+  padding: 16px 20px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--motion-hover), border-color var(--motion-hover);
+}
+
+.modal-menu__item:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+}
+
+.modal-menu__item .arrow {
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+[data-auth-only] {
+  display: none;
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SmartGás — Instruções</title>
+  <title>SmartGás — Cadastro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,15 +12,14 @@
   <link rel="stylesheet" href="../css/aurora.css">
   <link rel="stylesheet" href="cadastro.css">
 
-  <link rel="stylesheet" href="./Instruções.css">
   <script src="../js/theme.js"></script>
-
   <script src="../js/aurora.js" defer></script>
   <script src="../js/ui.js" defer></script>
   <script src="../js/conta.js" defer></script>
+  <script src="cadastro.js" defer></script>
 </head>
 
-<body data-page="instrucoes" id="Smartgas">
+<body data-page="cadastro" id="Smartgas">
 
   <div class="aurora" aria-hidden="true">
     <div class="orb orb--1"></div>
@@ -41,9 +40,9 @@
         <nav class="nav-links" id="nav-links" aria-label="Navegação principal">
           <a href="../index.html">Início</a>
           <a href="../Produto/produto.html">Produto</a>
-          <a href="./Instruções.html">Instruções</a>
+          <a href="../Instruções/Instruções.html">Instruções</a>
           <a href="../Equipe/Equipe.html">Equipe</a>
-          <a href="../Jogo/Jogo.html">Jogo</a>
+          <a href="../Jogo/Jogo.html" data-auth-only>Jogo</a>
           <a href="../Refs/Refs.html">Refs</a>
         </nav>
 
@@ -54,7 +53,33 @@
     </header>
 
     <dialog class="modal" id="account-modal" aria-labelledby="account-title">
-      <div class="panel">
+      <div class="panel" id="modal-logged-in" style="display: none;">
+        <span class="eyebrow eyebrow--bare">MINHA CONTA</span>
+        
+        <div style="margin-bottom: 16px; width: 100%;">
+            <h2 class="t-h3" id="account-user-name">Bem-vindo</h2>
+            <p class="t-caption" id="account-user-email" style="margin-top: 4px;"></p>
+        </div>
+
+        <div class="modal-menu">
+            <a href="#" class="modal-menu__item">Minha conta <span class="arrow">›</span></a>
+            <a href="../Jogo/Jogo.html" class="modal-menu__item">Ir para o jogo <span class="arrow">›</span></a>
+        </div>
+
+        <button type="button" class="btn btn--outline" id="btn-logout">Sair</button>
+
+        <div class="modal__theme" style="width: 100%;">
+          <span class="t-caption">Aparência</span>
+          <div class="modal__seg" role="group" aria-label="Escolha de aparência">
+            <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
+            <button type="button" class="modal__opt" data-theme-option="light">Light</button>
+          </div>
+        </div>
+
+        <button type="button" class="modal__close" data-close-modal>Fechar</button>
+      </div>
+
+      <div class="panel" id="modal-logged-out">
         <span class="eyebrow">SUA CONTA</span>
         <h2 class="t-h3" id="account-title">Você não está conectado</h2>
         <p class="t-body-m modal__text">
@@ -66,7 +91,7 @@
           <a class="btn btn--secondary" href="cadastro.html">Criar conta</a>
         </div>
 
-        <div class="modal__theme">
+        <div class="modal__theme" style="width: 100%;">
           <span class="t-caption">Aparência</span>
           <div class="modal__seg" role="group" aria-label="Escolha de aparência">
             <button type="button" class="modal__opt" data-theme-option="dark">Dark</button>
@@ -78,64 +103,61 @@
       </div>
     </dialog>
 
-    <body>
+    <main>
+      <section class="section" id="Principal">
+        <div class="container auth-container">
+          <div class="panel auth-panel">
+            <span class="eyebrow eyebrow--bare">CRIAR CONTA</span>
+            <h2 class="t-h2">Criar sua conta SmartGás</h2>
+            <p class="t-body-m text-subtitle">
+              Preencha os dados abaixo para começar a usar o painel e o jogo.
+            </p>
+        
+            <form action="" id="signup-form">
+              <div class="form-group">
+                <label for="nome" class="t-caption">Nome completo</label>
+                <input type="text" placeholder="Alexandre Souza" id="nome" required>
+              </div>
 
-        <main>
-            <section class="section" id="Principal">
-                <div class="container auth-container">
-                    
-                <div class="panel auth-panel">
-                    <span class="eyebrow eyebrow--bare">CRIAR CONTA</span>
-                    <h2 class="t-h2">Criar sua conta SmartGás</h2>
-                    <p class="t-body-m text-subtitle">
-                    Preencha os dados abaixo para começar a usar o painel e o jogo.
-                    </p>
-                
-                    <form action="" id="signup-form">
-                        <div class="form-group">
-                            <label for="nome" class="t-caption">Nome completo</label>
-                            <input type="text" placeholder="Alexandre Souza" id="nome" required>
-                        </div>
+              <div class="form-group">
+                <label for="email" class="t-caption">E-mail</label>
+                <input type="email" placeholder="voce@email.com" id="email" required>
+              </div>
 
-                        <div class="form-group">
-                            <label for="email" class="t-caption">E-mail</label>
-                            <input type="email" placeholder="voce@email.com" id="email" required>
-                        </div>
+              <div class="form-group">
+                <label for="senha" class="t-caption">Senha</label>
+                <input type="password" placeholder="••••••••" id="senha" required>
+              </div>
 
-                        <div class="form-group">
-                            <label for="senha" class="t-caption">Senha</label>
-                            <input type="password" placeholder="••••••••" id="senha" required>
-                        </div>
+              <div class="form-group">
+                <label for="confirmar-senha" class="t-caption">Confirmar senha</label>
+                <input type="password" placeholder="••••••••" id="confirmar-senha" required>
+              </div>
 
-                        <div class="form-group">
-                            <label for="confirmar-senha" class="t-caption">Confirmar senha</label>
-                            <input type="password" placeholder="••••••••" id="confirmar-senha" required>
-                        </div>
+              <div class="password-rules">
+                <p class="t-caption" style="font-weight: 600; color: var(--text-primary);">A senha precisa seguir estas regras</p>
+                <ul class="t-caption">
+                  <li>De 8 a 32 caracteres</li>
+                  <li>Somente letras (A–Z, a–z) e números (0–9)</li>
+                  <li>Pelo menos uma letra e um número</li>
+                  <li>Sem espaços em branco</li>
+                  <li>Sem símbolos, acentos ou emojis (@ # $ % ç ã)</li>
+                </ul>
+                <p class="t-caption" style="font-size: 12px;">Caracteres não reconhecidos são bloqueados automaticamente no campo.</p>
+              </div>
 
-                        <div class="password-rules">
-                        <p class="t-caption" style="font-weight: 600; color: var(--text-primary);">A senha precisa seguir estas regras</p>
-                        <ul class="t-caption">
-                            <li>De 8 a 32 caracteres</li>
-                            <li>Somente letras (A–Z, a–z) e números (0–9)</li>
-                            <li>Pelo menos uma letra e um número</li>
-                            <li>Sem espaços em branco</li>
-                            <li>Sem símbolos, acentos ou emojis (@ # $ % ç ã)</li>
-                        </ul>
-                        <p class="t-caption" style="font-size: 12px;">Caracteres não reconhecidos são bloqueados automaticamente no campo.</p>
-                        </div>
+              <button type="submit" class="btn btn--primary" id="btn-criar-conta">Criar conta</button>
+            </form>
 
-                        <button type="submit" class="btn btn--primary" id="btn-criar-conta">Criar conta</button>
-                    </form>
+            <p class="t-body-s login-link">
+              Já tem conta? <a href="../Login/login.html">Entrar</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
 
-                    <p class="t-body-s login-link">
-                        Já tem conta? <a href="../Login/login.html">Entrar</a>
-                    </p>
-                </div>
-                </div>
-            </section>
-        </main>
-
-            <footer class="footer">
+    <footer class="footer">
       <div class="container footer__inner">
         <div class="footer__brand">
           <span class="wordmark">SmartGas.</span>
@@ -155,7 +177,7 @@
 
         <span class="footer__meta">TCC SmartGás • SafeStep • 2026</span>
       </div>
-            </footer>
-        </div>
-    </body>
+    </footer>
+  </div>
+</body>
 </html>

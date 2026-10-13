@@ -1,34 +1,29 @@
 const loginForm = document.querySelector("#login-form");
 
-loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+if (loginForm) {
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
 
-    const email = document.querySelector("#email").value;
-    const password = document.querySelector("#senha").value;
+        const email = document.querySelector("#email").value.trim();
+        const password = document.querySelector("#senha").value;
 
-    try {
-        const response = await fetch("", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ user: { email, password } })
-        });
+        let users = JSON.parse(localStorage.getItem("smartgas_users")) || [];
+        const user = users.find(u => u.email === email && u.password === password);
 
-        const data = await response.json();
-
-        if (!response.ok || data.message) {
-            alert(data.message || "E-mail ou senha incorretos.");
+        if (!user) {
+            alert("E-mail ou senha incorretos. Você já se cadastrou?");
             return;
         }
 
-        const { id, name } = data;
-        sessionStorage.setItem("user", JSON.stringify({ id, name, email }));
+        const sessionData = {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        };
+        
+        localStorage.setItem("smartgas_session", JSON.stringify(sessionData));
 
-        window.location.href = "login-sucesso.html";
-
-    } catch (error) {
-        console.error("Erro no login:", error);
-        alert("Erro de conexão com o servidor. Tente novamente.");
-    }
-});
+        alert("Login realizado com sucesso!");
+        window.location.href = "../index.html";
+    });
+}
