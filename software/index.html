@@ -171,11 +171,13 @@
           <span id="active-cylinder-installed" class="muted">Nenhum ciclo selecionado</span>
         </div>
         <div class="cylinder-actions">
-          <label>Peso total do novo botijão (kg)<input id="replacement-weight" type="number" min="0" max="100" step="0.01" /></label>
+          <button id="replacement-start" class="button secondary" type="button">Iniciar troca</button>
+          <span id="replacement-weight-status" class="muted">A balança será lida pelo sistema após iniciar.</span>
           <label>Gás inicial (kg)<input id="replacement-gas" type="number" min="0" max="100" step="0.01" /></label>
-          <button id="replace-cylinder-button" class="button secondary" type="button">Registrar troca</button>
+          <button id="replace-cylinder-button" class="button primary" type="button" disabled>Confirmar troca</button>
+          <button id="replacement-cancel" class="button secondary" type="button" disabled>Cancelar</button>
         </div>
-        <p class="muted">A troca encerra o ciclo atual e inicia o próximo número, preservando os históricos anteriores.</p>
+        <p id="replacement-help" class="muted">Inicie a troca, coloque o botijão na balança e aguarde uma leitura estável.</p>
         <form id="settings-form" class="settings-form cylinder-settings-form">
           <label>Tara calculada (kg)<input id="tare-kg" name="tareKg" type="number" readonly /></label>
           <label>Capacidade de gás (kg)<input id="capacity-kg" name="capacityKg" type="number" min="0.01" max="100" step="0.01" required /></label>
