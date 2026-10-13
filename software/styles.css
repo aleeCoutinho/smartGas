@@ -105,12 +105,14 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 .simulation-controls label { display: grid; gap: 6px; color: var(--text-secondary); font-size: 13px; }
 .simulation-controls input { min-width: 170px; }
 .cylinder-panel { margin-top: 24px; }
-.cylinder-actions { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.cylinder-actions { display: flex; flex-wrap: wrap; align-items: end; justify-content: flex-start; gap: 10px; }
 .cylinder-actions label, .cylinder-filter { display: grid; gap: 6px; color: var(--text-secondary); font-size: 13px; }
 .cylinder-actions input, .cylinder-filter select { min-width: 170px; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 11px 12px; background: var(--bg-elevated); color: var(--text-primary); }
 .cylinder-filter select { min-width: 150px; }
+.replacement-gas-field { margin-left: auto; }
 .cylinder-settings-form { margin-top: 18px; }
 .cylinder-settings-form input[readonly] { opacity: .75; }
+.cylinder-settings-form .button { grid-column: 1 / -1; justify-self: center; min-width: 320px; }
 .period-button {
   flex: 0 0 auto; min-width: 72px; border: 1px solid transparent; border-radius: var(--radius-pill);
   padding: 8px 12px; color: var(--text-secondary); font-size: 13px; line-height: 1.2;
