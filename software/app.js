@@ -93,7 +93,10 @@ function renderCylinders(cylinders) {
   const select = byId("cylinder-filter");
   const current = state.cylinderFilter;
   select.replaceChildren();
-  const options = [{ value: "active", label: "Botijão atual" }, { value: "all", label: "Todos os botijões" }, ...cylinders.map((cylinder) => ({ value: String(cylinder.id), label: `Botijão ${cylinder.number}` }))];
+  const options = [
+    { value: "active", label: "Botijão atual" },
+    ...cylinders.map((cylinder) => ({ value: String(cylinder.id), label: `Botijão ${cylinder.number}` })),
+  ];
   for (const option of options) {
     const element = document.createElement("option");
     element.value = option.value;
@@ -135,17 +138,13 @@ function renderReplacement(replacement) {
 }
 
 function cylinderQuery() {
-  if (state.cylinderFilter === "all") return "";
-  if (state.cylinderFilter === "active") {
-    const active = state.cylinders.find((cylinder) => !cylinder.removedAt);
-    return active ? `&cylinderId=${active.id}` : "";
-  }
-  return `&cylinderId=${encodeURIComponent(state.cylinderFilter)}`;
+  if (state.cylinderFilter !== "active") return `&cylinderId=${encodeURIComponent(state.cylinderFilter)}`;
+  const active = state.cylinders.find((cylinder) => !cylinder.removedAt);
+  return active ? `&cylinderId=${active.id}` : "";
 }
 
 function activeCylinderQuery() {
-  const active = state.cylinders.find((cylinder) => !cylinder.removedAt);
-  return active ? `&cylinderId=${active.id}` : "";
+  return cylinderQuery();
 }
 
 function renderAlert(status) {
