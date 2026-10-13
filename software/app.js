@@ -10,7 +10,6 @@ const state = {
   cylinderFilter: "active",
   consumptionRange: "day",
   commandPending: false,
-  simulation: { active: false, leakActive: false, weightKg: 0 },
   replacement: null,
   refreshTimer: null,
 };
@@ -73,7 +72,6 @@ function showToast(message, error = false) {
 
 function renderStatus(status) {
   state.status = status;
-  state.simulation = status.simulation ?? state.simulation;
   setBadge(byId("backend-badge"), "Backend conectado", "ok");
   setBadge(byId("central-badge"), status.deviceOnline ? "ESP1 online" : "ESP1 offline", status.deviceOnline ? "ok" : "danger");
 
@@ -88,7 +86,6 @@ function renderStatus(status) {
   byId("esp2-state").textContent = status.esp2Online ? "Online" : "Offline";
   renderAlert(status);
   renderValveControls();
-  renderSimulation();
 }
 
 function renderCylinders(cylinders) {
@@ -151,22 +148,6 @@ function activeCylinderQuery() {
   return active ? `&cylinderId=${active.id}` : "";
 }
 
-function renderSimulation() {
-  const simulation = state.simulation;
-  const active = Boolean(simulation?.active);
-  setBadge(byId("simulation-badge"), active ? "Simulação ativa" : "Simulação inativa", active ? "warning" : "neutral");
-  byId("simulation-start").disabled = active;
-  byId("simulation-stop").disabled = !active;
-  byId("simulation-weight").disabled = !active;
-  byId("simulation-apply-weight").disabled = !active;
-  byId("simulation-leak-on").disabled = !active || simulation.leakActive;
-  byId("simulation-leak-off").disabled = !active || !simulation.leakActive;
-  if (active) {
-    byId("simulation-weight").value = simulation.weightKg ?? "";
-    byId("simulation-help").textContent = "A válvula física fica indisponível durante a simulação; peso e vazamento são demonstrativos.";
-  } else byId("simulation-help").textContent = "Os dados reais continuarão sendo aceitos quando a simulação estiver parada.";
-}
-
 function renderAlert(status) {
   const banner = byId("alert-banner");
   const button = byId("banner-ack-button");
@@ -205,7 +186,7 @@ function renderValveControls() {
   const status = state.status;
   if (!status) return;
 
-  const openingBlocked = !status.deviceOnline || !status.esp2Online || status.leakActive || Boolean(status.unacknowledgedLeak) || state.commandPending || state.simulation.active;
+  const openingBlocked = !status.deviceOnline || !status.esp2Online || status.leakActive || Boolean(status.unacknowledgedLeak) || state.commandPending;
   open.disabled = openingBlocked || status.valveState === "OPEN";
   close.disabled = !status.deviceOnline || state.commandPending || state.replacement || status.valveState === "CLOSED";
   if (state.replacement) {
@@ -214,8 +195,7 @@ function renderValveControls() {
     return;
   }
 
-  if (state.simulation.active) byId("valve-help").textContent = "Comandos físicos desabilitados durante o modo de simulação.";
-  else if (!status.deviceOnline) byId("valve-help").textContent = "A central está offline; nenhum comando pode ser enviado.";
+  if (!status.deviceOnline) byId("valve-help").textContent = "A central está offline; nenhum comando pode ser enviado.";
   else if (!status.esp2Online) byId("valve-help").textContent = "O ESP2 está offline ou aquecendo; a abertura permanece bloqueada.";
   else if (status.leakActive) byId("valve-help").textContent = "A abertura está bloqueada enquanto houver vazamento.";
   else if (status.unacknowledgedLeak) byId("valve-help").textContent = "Reconheça o alerta encerrado antes de abrir.";
@@ -431,15 +411,6 @@ async function refreshStatus() {
   }
 }
 
-async function refreshSimulation() {
-  try {
-    state.simulation = await api("/api/simulation/status");
-    renderSimulation();
-  } catch (error) {
-    showToast(error.message, true);
-  }
-}
-
 async function refreshConsumption() {
   renderConsumption(await api(`/api/gas/consumption?range=${state.consumptionRange}&scope=all`));
 }
@@ -451,7 +422,6 @@ async function refreshGasHistory() {
 async function refreshAll(showSuccess = false) {
   const jobs = [
     refreshStatus(),
-    refreshSimulation(),
     api("/api/cylinders").then((cylinders) => {
       renderCylinders(cylinders);
       return refreshGasHistory();
@@ -466,32 +436,6 @@ async function refreshAll(showSuccess = false) {
   const failures = results.filter((result) => result.status === "rejected");
   if (failures.length > 0) showToast("Não foi possível carregar todos os dados do backend.", true);
   else if (showSuccess) showToast("Dados atualizados.");
-}
-
-async function startSimulation() {
-  try {
-    state.simulation = await api("/api/simulation/start", { method: "POST", body: JSON.stringify({ days: 30 }) });
-    renderSimulation();
-    showToast("Simulação iniciada com 30 dias de histórico.");
-    await refreshAll();
-  } catch (error) { showToast(error.message, true); }
-}
-
-async function stopSimulation() {
-  try {
-    state.simulation = await api("/api/simulation/stop", { method: "POST" });
-    renderSimulation();
-    showToast("Simulação encerrada.");
-    await refreshAll();
-  } catch (error) { showToast(error.message, true); }
-}
-
-async function updateSimulation(payload) {
-  try {
-    state.simulation = await api("/api/simulation/state", { method: "POST", body: JSON.stringify(payload) });
-    renderSimulation();
-    await refreshAll();
-  } catch (error) { showToast(error.message, true); }
 }
 
 async function replaceCylinder() {
@@ -602,14 +546,6 @@ byId("open-valve").addEventListener("click", () => void sendValveCommand("OPEN")
 byId("close-valve").addEventListener("click", () => void sendValveCommand("CLOSE"));
 byId("refresh-button").addEventListener("click", () => void refreshAll(true));
 byId("settings-form").addEventListener("submit", saveSettings);
-byId("simulation-start").addEventListener("click", () => void startSimulation());
-byId("simulation-stop").addEventListener("click", () => void stopSimulation());
-byId("simulation-apply-weight").addEventListener("click", () => {
-  const weightKg = Number(byId("simulation-weight").value);
-  if (Number.isFinite(weightKg)) void updateSimulation({ weightKg });
-});
-byId("simulation-leak-on").addEventListener("click", () => void updateSimulation({ leakActive: true }));
-byId("simulation-leak-off").addEventListener("click", () => void updateSimulation({ leakActive: false }));
 byId("replace-cylinder-button").addEventListener("click", () => void replaceCylinder());
 byId("replacement-start").addEventListener("click", () => void startReplacement());
 byId("replacement-cancel").addEventListener("click", () => void cancelReplacement());
