@@ -332,7 +332,7 @@ function renderGasHistory(readings) {
   state.telemetry = readings;
   const container = byId("gas-history-chart");
   container.replaceChildren();
-  const ordered = [...readings].sort((a, b) => new Date(a.receivedAt) - new Date(b.receivedAt)).slice(-240);
+  const ordered = [...readings].sort((a, b) => new Date(a.receivedAt) - new Date(b.receivedAt)).slice(-500);
   container.classList.toggle("empty-state", ordered.length === 0);
   if (ordered.length === 0) {
     container.textContent = "Nenhuma leitura registrada.";
@@ -346,12 +346,18 @@ function renderGasHistory(readings) {
   const selectedCylinder = state.cylinderFilter === "active"
     ? state.cylinders.find((cylinder) => !cylinder.removedAt)
     : state.cylinders.find((cylinder) => String(cylinder.id) === String(state.cylinderFilter));
+  const cycleStart = selectedCylinder?.installedAt ? new Date(selectedCylinder.installedAt) : new Date(ordered[0].receivedAt);
+  const cycleEnd = selectedCylinder?.removedAt ? new Date(selectedCylinder.removedAt) : new Date();
+  const cycleStartMs = cycleStart.getTime();
+  const cycleEndMs = Math.max(cycleStartMs + 1, cycleEnd.getTime());
   const selectedCapacity = selectedCylinder?.capacityKg ?? 0;
   const min = Math.min(...values);
   const max = Math.max(...values, selectedCapacity);
   const span = max - Math.min(0, min) || 1;
   const points = ordered.map((reading, index) => {
-    const x = pad.left + (index / Math.max(1, ordered.length - 1)) * (width - pad.left - pad.right);
+    const readingMs = new Date(reading.receivedAt).getTime();
+    const progress = Math.min(1, Math.max(0, (readingMs - cycleStartMs) / (cycleEndMs - cycleStartMs)));
+    const x = pad.left + progress * (width - pad.left - pad.right);
     const y = height - pad.bottom - ((reading.gasKg - Math.min(0, min)) / span) * (height - pad.top - pad.bottom);
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
@@ -380,14 +386,17 @@ function renderGasHistory(readings) {
   polyline.setAttribute("points", points.join(" "));
   polyline.setAttribute("class", "chart-line");
   svg.append(area, polyline);
-  const dateIndexes = [0, Math.floor((ordered.length - 1) / 2), ordered.length - 1];
-  for (const index of dateIndexes) {
-    const [x] = points[index].split(",");
+  const dateLabels = [
+    { date: cycleStart, x: pad.left, anchor: "start" },
+    { date: new Date((cycleStartMs + cycleEndMs) / 2), x: (pad.left + width - pad.right) / 2, anchor: "middle" },
+    { date: cycleEnd, x: width - pad.right, anchor: "end" },
+  ];
+  for (const item of dateLabels) {
     const label = document.createElementNS(ns, "text");
-    label.setAttribute("x", x); label.setAttribute("y", String(height - 8));
-    label.setAttribute("text-anchor", index === 0 ? "start" : index === ordered.length - 1 ? "end" : "middle");
+    label.setAttribute("x", String(item.x)); label.setAttribute("y", String(height - 8));
+    label.setAttribute("text-anchor", item.anchor);
     label.setAttribute("class", "chart-axis-label");
-    label.textContent = shortDateFormatter.format(new Date(ordered[index].receivedAt));
+    label.textContent = shortDateFormatter.format(item.date);
     svg.append(label);
   }
   container.append(svg);
