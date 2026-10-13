@@ -310,6 +310,16 @@ function renderConsumption(data) {
   }
 
   const maximum = Math.max(...data.buckets.map((bucket) => bucket.consumptionKg), 0.001);
+  const consumptionLabel = (start) => {
+    const date = new Date(start);
+    if (data.range === "day") {
+      return `${new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", hourCycle: "h23" }).format(date)}h`;
+    }
+    if (data.range === "week") {
+      return new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", weekday: "long" }).format(date);
+    }
+    return new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", day: "numeric" }).format(date);
+  };
   for (const bucket of data.buckets) {
     const item = document.createElement("div");
     item.className = "bar-item";
@@ -322,7 +332,7 @@ function renderConsumption(data) {
     bar.title = `${formatDate(bucket.start)}: ${value.textContent}`;
     const label = document.createElement("span");
     label.className = "bar-label";
-    label.textContent = shortDateFormatter.format(new Date(bucket.start));
+    label.textContent = consumptionLabel(bucket.start);
     item.append(value, bar, label);
     chart.append(item);
   }
