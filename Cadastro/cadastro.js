@@ -28,28 +28,19 @@ if (signupForm) {
             return;
         }
 
-        let users = JSON.parse(localStorage.getItem("smartgas_users")) || [];
-
-        const userExists = users.some(u => u.email === email);
-        if (userExists) {
-            alert("Este e-mail já está cadastrado!");
-            return;
-        }
-
-        const newUser = {
-            id: Date.now().toString(),
-            name: name,
-            email: email,
-            password: password 
-        };
-
-        users.push(newUser);
-        localStorage.setItem("smartgas_users", JSON.stringify(users));
-
-        const sessionData = { id: newUser.id, name: newUser.name, email: newUser.email };
-        localStorage.setItem("smartgas_session", JSON.stringify(sessionData));
-
-        alert("Conta criada com sucesso!");
-        window.location.href = "../Login/login.html";
+        window.SafeGasAuth.request("/api/auth/signup", {
+            method: "POST",
+            body: JSON.stringify({ name: name, email: email, password: password })
+        }).then(function (payload) {
+            window.SafeGasAuth.save(payload);
+            if (!payload.user.canAccessPanel) {
+                alert("Conta criada, mas este usuário não tem acesso ao painel.");
+                return;
+            }
+            alert("Conta criada com sucesso!");
+            window.location.href = "../software/index.html";
+        }).catch(function (error) {
+            alert(error.message);
+        });
     });
 }

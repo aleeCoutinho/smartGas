@@ -13,16 +13,15 @@
 
   function updateAccountView() {
     var session = localStorage.getItem("smartgas_session");
-
-    
+    var user = null;
+    try { user = session ? JSON.parse(session) : null; } catch (err) { user = null; }
     var authOnlyElements = document.querySelectorAll("[data-auth-only]");
     for (var i = 0; i < authOnlyElements.length; i++) {
-      authOnlyElements[i].style.display = session ? "inline-flex" : "none";
+      authOnlyElements[i].style.display = user && user.canAccessPanel ? "inline-flex" : "none";
     }
 
-    if (session) {
+    if (user) {
       try {
-        var user = JSON.parse(session);
         if (userNameEl) userNameEl.textContent = "Bem-vindo, " + (user.name || "Usuário");
         if (userEmailEl) userEmailEl.textContent = user.email || "";
 
@@ -53,6 +52,8 @@
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function () {
+      if (window.SafeGasAuth) window.SafeGasAuth.clear();
+      else localStorage.removeItem("smartgas_token");
       localStorage.removeItem("smartgas_session");
       updateAccountView();
       modal.close();

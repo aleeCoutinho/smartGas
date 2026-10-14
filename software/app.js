@@ -32,10 +32,18 @@ const numberFormatter = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 
 async function api(path, options = {}) {
   const headers = { ...options.headers };
   if (options.body !== undefined) headers["Content-Type"] = "application/json";
+  const token = localStorage.getItem("smartgas_token");
+  if (token) headers.Authorization = `Bearer ${token}`;
   const response = await fetch(`${API}${path}`, {
     ...options,
     headers,
   });
+  if (response.status === 401 || response.status === 403) {
+    localStorage.removeItem("smartgas_token");
+    localStorage.removeItem("smartgas_session");
+    window.location.href = "../Login/login.html";
+    throw new Error("Sessão inválida ou sem acesso ao painel.");
+  }
   const contentType = response.headers.get("content-type") ?? "";
   const payload = contentType.includes("application/json") ? await response.json() : null;
   if (!response.ok) {
@@ -558,6 +566,10 @@ async function saveSettings(event) {
 
 async function connectSocket() {
   try {
+    if (!localStorage.getItem("smartgas_token")) {
+      window.location.href = "../Login/login.html";
+      return;
+    }
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.src = `${API}/socket.io/socket.io.js`;
@@ -565,7 +577,7 @@ async function connectSocket() {
       script.onerror = reject;
       document.head.append(script);
     });
-    const socket = window.io(API, { transports: ["websocket", "polling"] });
+    const socket = window.io(API, { transports: ["websocket", "polling"], auth: { token: localStorage.getItem("smartgas_token") } });
     socket.on("connect", () => setBadge(byId("socket-badge"), "Tempo real conectado", "ok"));
     socket.on("disconnect", () => setBadge(byId("socket-badge"), "Tempo real desconectado", "warning"));
     socket.on("connect_error", () => setBadge(byId("socket-badge"), "Tempo real indisponível", "warning"));
