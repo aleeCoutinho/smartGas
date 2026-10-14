@@ -118,10 +118,8 @@ function renderCylinders(cylinders) {
   byId("active-cylinder-installed").textContent = active ? `Instalado em ${formatDate(active.installedAt)}` : "Nenhum ciclo selecionado";
   const hasLiveReading = Boolean(state.status?.deviceOnline && state.status?.lastSeenAt);
   if (active && hasLiveReading) {
-    byId("initial-gas-kg").value = active.initialGasKg ?? "";
     byId("initial-weight-kg").value = active.initialWeightKg ?? "";
   } else {
-    byId("initial-gas-kg").value = "";
     byId("initial-weight-kg").value = "";
   }
   if (!state.replacement) byId("replacement-start").disabled = !active;
@@ -134,7 +132,7 @@ function renderReplacement(replacement) {
   byId("replacement-start").disabled = pending || state.replacementArmed;
   byId("replacement-scale-confirm").disabled = pending || !state.replacementArmed;
   byId("replacement-cancel").disabled = !pending && !state.replacementArmed;
-  byId("replacement-gas").disabled = !pending || !stable;
+  byId("replacement-gas").disabled = !pending && !state.replacementArmed;
   if (!pending) {
     byId("replacement-weight-status").textContent = state.replacementArmed
       ? "Aguardando confirmação de posicionamento."
@@ -148,6 +146,7 @@ function renderReplacement(replacement) {
   byId("replacement-weight-status").textContent = replacement.measuredWeightKg == null
     ? "Aguardando leitura da balança..."
     : `Peso total medido: ${formatNumber(replacement.measuredWeightKg, " kg")} (${stable ? "leitura estável" : "estabilizando"})`;
+  byId("initial-weight-kg").value = replacement.measuredWeightKg ?? "";
   byId("replacement-help").textContent = stable
     ? "Informe o gás inicial e confirme a troca."
     : "Mantenha o botijão parado até a leitura ficar estável.";
@@ -455,8 +454,6 @@ function fillSettings(settings) {
   const form = byId("settings-form");
   if (form.matches(":focus-within")) return;
   const hasLiveReading = Boolean(state.status?.deviceOnline && state.status?.lastSeenAt);
-  byId("tare-kg").value = hasLiveReading ? settings.tareKg : "";
-  byId("initial-gas-kg").value = hasLiveReading ? (settings.initialGasKg ?? "") : "";
   byId("initial-weight-kg").value = hasLiveReading ? (settings.initialWeightKg ?? "") : "";
   byId("noise-kg").value = settings.noiseToleranceKg;
   byId("refill-kg").value = settings.refillThresholdKg;
