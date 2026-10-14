@@ -11,6 +11,7 @@ const state = {
   consumptionRange: "day",
   commandPending: false,
   replacement: null,
+  replacementArmed: false,
   refreshTimer: null,
 };
 
@@ -115,9 +116,13 @@ function renderCylinders(cylinders) {
   const active = cylinders.find((cylinder) => !cylinder.removedAt) ?? cylinders.at(-1);
   byId("active-cylinder-title").textContent = active ? `Botijão ${active.number}` : "Botijão atual";
   byId("active-cylinder-installed").textContent = active ? `Instalado em ${formatDate(active.installedAt)}` : "Nenhum ciclo selecionado";
-  if (active) {
+  const hasLiveReading = Boolean(state.status?.deviceOnline && state.status?.lastSeenAt);
+  if (active && hasLiveReading) {
     byId("initial-gas-kg").value = active.initialGasKg ?? "";
     byId("initial-weight-kg").value = active.initialWeightKg ?? "";
+  } else {
+    byId("initial-gas-kg").value = "";
+    byId("initial-weight-kg").value = "";
   }
   if (!state.replacement) byId("replacement-start").disabled = !active;
 }
@@ -126,13 +131,18 @@ function renderReplacement(replacement) {
   state.replacement = replacement;
   const pending = Boolean(replacement);
   const stable = Boolean(replacement?.weightStable);
-  byId("replacement-start").disabled = pending;
-  byId("replacement-cancel").disabled = !pending;
-  byId("replace-cylinder-button").disabled = !pending || !stable;
+  byId("replacement-start").disabled = pending || state.replacementArmed;
+  byId("replacement-scale-confirm").disabled = pending || !state.replacementArmed;
+  byId("replacement-cancel").disabled = !pending && !state.replacementArmed;
   byId("replacement-gas").disabled = !pending || !stable;
   if (!pending) {
-    byId("replacement-weight-status").textContent = "A balança será lida pelo sistema após iniciar.";
-    byId("replacement-help").textContent = "Inicie a troca, coloque o botijão na balança e aguarde uma leitura estável.";
+    byId("replacement-weight-status").textContent = state.replacementArmed
+      ? "Aguardando confirmação de posicionamento."
+      : "A balança será lida após a confirmação.";
+    byId("replacement-help").textContent = state.replacementArmed
+      ? "Coloque o botijão na balança e confirme quando ele estiver posicionado."
+      : "Prepare a troca, coloque o botijão na balança e confirme o posicionamento.";
+    updateReplacementConfirmButton();
     return;
   }
   byId("replacement-weight-status").textContent = replacement.measuredWeightKg == null
@@ -141,7 +151,18 @@ function renderReplacement(replacement) {
   byId("replacement-help").textContent = stable
     ? "Informe o gás inicial e confirme a troca."
     : "Mantenha o botijão parado até a leitura ficar estável.";
+  updateReplacementConfirmButton();
   renderValveControls();
+}
+
+function updateReplacementConfirmButton() {
+  const replacement = state.replacement;
+  const gas = Number(byId("replacement-gas").value);
+  const valid = Boolean(replacement?.weightStable)
+    && Number.isFinite(gas)
+    && gas > 0
+    && gas < Number(replacement.measuredWeightKg);
+  byId("replace-cylinder-button").disabled = !valid;
 }
 
 function cylinderQuery() {
@@ -334,14 +355,12 @@ function renderConsumption(data) {
     }
     return new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", day: "numeric" }).format(date);
   };
-  let currentItem;
   for (const [index, bucket] of data.buckets.entries()) {
     const item = document.createElement("div");
     item.className = "bar-item";
     if (index === currentIndex) {
       item.classList.add("current");
       item.setAttribute("aria-current", "time");
-      currentItem = item;
     }
     const value = document.createElement("span");
     value.className = "bar-value";
@@ -356,7 +375,6 @@ function renderConsumption(data) {
     item.append(value, bar, label);
     chart.append(item);
   }
-  if (currentItem) requestAnimationFrame(() => currentItem.scrollIntoView({ block: "nearest", inline: "center" }));
 }
 
 function renderGasHistory(readings) {
@@ -436,10 +454,10 @@ function renderGasHistory(readings) {
 function fillSettings(settings) {
   const form = byId("settings-form");
   if (form.matches(":focus-within")) return;
-  byId("tare-kg").value = settings.tareKg;
-  byId("capacity-kg").value = settings.capacityKg;
-  byId("initial-gas-kg").value = settings.initialGasKg ?? "";
-  byId("initial-weight-kg").value = settings.initialWeightKg ?? "";
+  const hasLiveReading = Boolean(state.status?.deviceOnline && state.status?.lastSeenAt);
+  byId("tare-kg").value = hasLiveReading ? settings.tareKg : "";
+  byId("initial-gas-kg").value = hasLiveReading ? (settings.initialGasKg ?? "") : "";
+  byId("initial-weight-kg").value = hasLiveReading ? (settings.initialWeightKg ?? "") : "";
   byId("noise-kg").value = settings.noiseToleranceKg;
   byId("refill-kg").value = settings.refillThresholdKg;
 }
@@ -483,8 +501,13 @@ async function refreshAll(showSuccess = false) {
 
 async function replaceCylinder() {
   const initialGasKg = Number(byId("replacement-gas").value);
-  if (!Number.isFinite(initialGasKg)) {
-    showToast("Informe o gás inicial do novo botijão.", true);
+  const measuredWeightKg = Number(state.replacement?.measuredWeightKg);
+  if (!state.replacement?.weightStable) {
+    showToast("Confirme o botijão na balança e aguarde uma leitura estável.", true);
+    return;
+  }
+  if (!Number.isFinite(initialGasKg) || initialGasKg <= 0 || initialGasKg >= measuredWeightKg) {
+    showToast("O gás inicial deve ser maior que zero e menor que o peso total medido.", true);
     return;
   }
   if (!window.confirm("Confirma a troca do botijão? O ciclo atual será encerrado.")) return;
@@ -496,17 +519,29 @@ async function replaceCylinder() {
   } catch (error) { showToast(error.message, true); }
 }
 
-async function startReplacement() {
+function prepareReplacement() {
+  state.replacementArmed = true;
+  renderReplacement(null);
+}
+
+async function confirmScalePlacement() {
   try {
     await api("/api/cylinders/replacement/start", { method: "POST" });
-    showToast("Troca iniciada. Coloque o botijão na balança.");
+    state.replacementArmed = false;
+    showToast("Botijão confirmado na balança. Aguardando leitura estável.");
     await refreshAll();
   } catch (error) { showToast(error.message, true); }
 }
 
 async function cancelReplacement() {
+  if (!state.replacement) {
+    state.replacementArmed = false;
+    renderReplacement(null);
+    return;
+  }
   try {
     await api("/api/cylinders/replacement/cancel", { method: "POST" });
+    state.replacementArmed = false;
     byId("replacement-gas").value = "";
     showToast("Troca cancelada.");
     await refreshAll();
@@ -554,6 +589,7 @@ async function saveSettings(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const payload = Object.fromEntries([...form.entries()].map(([key, value]) => [key, Number(value)]));
+  payload.capacityKg = state.status?.settings?.capacityKg ?? state.status?.settings?.initialGasKg ?? 13;
   try {
     await api("/api/settings", { method: "PUT", body: JSON.stringify(payload) });
     showToast("Configurações da balança salvas.");
@@ -594,7 +630,9 @@ byId("close-valve").addEventListener("click", () => void sendValveCommand("CLOSE
 byId("refresh-button").addEventListener("click", () => void refreshAll(true));
 byId("settings-form").addEventListener("submit", saveSettings);
 byId("replace-cylinder-button").addEventListener("click", () => void replaceCylinder());
-byId("replacement-start").addEventListener("click", () => void startReplacement());
+byId("replacement-start").addEventListener("click", prepareReplacement);
+byId("replacement-scale-confirm").addEventListener("click", () => void confirmScalePlacement());
+byId("replacement-gas").addEventListener("input", updateReplacementConfirmButton);
 byId("replacement-cancel").addEventListener("click", () => void cancelReplacement());
 byId("cylinder-filter").addEventListener("change", (event) => {
   state.cylinderFilter = event.currentTarget.value;
