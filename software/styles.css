@@ -59,7 +59,7 @@ h2 { font-size: clamp(24px, 2vw, 30px); line-height: 1.2; letter-spacing: -.5px;
 .alert-banner p { margin-top: 4px; color: var(--text-secondary); }
 .alert-banner.cleared { border-color: color-mix(in srgb, #f5b942 48%, var(--border-subtle)); background: color-mix(in srgb, #f5b942 12%, var(--bg-surface)); }
 
-.summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-3); }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
 .page-shell .card, .page-shell .panel { background: color-mix(in srgb, var(--bg-surface) 91%, transparent); border: 1px solid var(--border-subtle); }
 .page-shell .card { min-height: 172px; padding: var(--space-5); border-radius: var(--radius-card); gap: 0; }
 .card-label { color: var(--text-secondary); font-size: 14px; font-weight: 500; }

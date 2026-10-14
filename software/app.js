@@ -87,7 +87,6 @@ function renderStatus(status) {
   byId("gas-percentage").textContent = formatNumber(status.gasPercentage, "%");
   byId("gas-weight").textContent = `${formatNumber(status.gasKg, " kg")} disponíveis`;
   byId("gas-progress").style.width = `${Math.min(100, Math.max(0, status.gasPercentage ?? 0))}%`;
-  byId("total-weight").textContent = formatNumber(status.totalWeightKg, " kg");
   byId("valve-state").textContent = valveLabel(status.valveState);
   byId("mq2-value").textContent = formatNumber(status.mq2Raw);
   byId("leak-state").textContent = status.leakActive ? "Vazamento detectado" : "Nenhum vazamento ativo";
