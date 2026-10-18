@@ -489,6 +489,35 @@ function renderGasHistory(readings) {
   polyline.setAttribute("points", points.join(" "));
   polyline.setAttribute("class", "chart-line");
   svg.append(polyline);
+  const tooltip = document.createElement("div");
+  tooltip.className = "chart-tooltip hidden";
+  tooltip.setAttribute("role", "tooltip");
+  const showTooltip = (reading, event) => {
+    tooltip.textContent = `${formatDate(reading.receivedAt)} · ${formatNumber(reading.gasKg, " kg")}`;
+    tooltip.classList.remove("hidden");
+    if (event?.clientX !== undefined) {
+      const bounds = container.getBoundingClientRect();
+      const left = Math.min(Math.max(8, event.clientX - bounds.left + 10), Math.max(8, bounds.width - 190));
+      tooltip.style.left = `${left}px`;
+    }
+  };
+  const hideTooltip = () => tooltip.classList.add("hidden");
+  for (const [index, reading] of ordered.entries()) {
+    const [cx, cy] = points[index].split(",");
+    const hit = document.createElementNS(ns, "circle");
+    hit.setAttribute("cx", cx);
+    hit.setAttribute("cy", cy);
+    hit.setAttribute("r", "9");
+    hit.setAttribute("class", "chart-point-hit");
+    hit.setAttribute("tabindex", "0");
+    hit.setAttribute("aria-label", `${formatDate(reading.receivedAt)}: ${formatNumber(reading.gasKg, " kg")}`);
+    hit.addEventListener("pointerenter", (event) => showTooltip(reading, event));
+    hit.addEventListener("pointermove", (event) => showTooltip(reading, event));
+    hit.addEventListener("pointerleave", hideTooltip);
+    hit.addEventListener("focus", () => showTooltip(reading));
+    hit.addEventListener("blur", hideTooltip);
+    svg.append(hit);
+  }
   if (points.length === 1) {
     const [cx, cy] = points[0].split(",");
     const marker = document.createElementNS(ns, "circle");
@@ -511,7 +540,7 @@ function renderGasHistory(readings) {
     label.textContent = shortDateFormatter.format(item.date);
     svg.append(label);
   }
-  container.append(svg);
+  container.append(svg, tooltip);
 }
 
 function fillSettings(settings) {
