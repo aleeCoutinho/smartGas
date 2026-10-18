@@ -96,9 +96,11 @@ function renderStatus(status) {
     : ["Medição desatualizada", "neutral"];
   setBadge(byId("scale-badge"), scaleText, scaleType);
 
-  const currentWeightIsUsable = status.deviceOnline && status.weightStatus === "VALID" && status.cylinderPresent === true;
-  byId("last-update").textContent = currentWeightIsUsable && status.lastSeenAt
-    ? `Última medição: ${formatDate(status.lastSeenAt)}`
+  const measuredAt = status.weightMeasuredAt ? new Date(status.weightMeasuredAt) : null;
+  const weightFresh = measuredAt && Date.now() - measuredAt.getTime() < 60_000;
+  const currentWeightIsUsable = status.deviceOnline && weightFresh && status.weightStatus === "VALID" && status.cylinderPresent === true;
+  byId("last-update").textContent = currentWeightIsUsable && status.weightMeasuredAt
+    ? `Última medição: ${formatDate(status.weightMeasuredAt)}`
     : "Aguardando uma nova leitura válida";
   byId("gas-percentage").textContent = currentWeightIsUsable ? formatNumber(status.gasPercentage, "%") : "—";
   byId("gas-weight").textContent = currentWeightIsUsable
@@ -399,7 +401,7 @@ function renderConsumption(data) {
     value.textContent = `${numberFormatter.format(bucket.consumptionKg)} kg`;
     const bar = document.createElement("div");
     bar.className = "bar";
-    bar.style.height = `${Math.max(2, (bucket.consumptionKg / maximum) * 155)}px`;
+    bar.style.height = `${bucket.consumptionKg > 0 ? Math.max(2, (bucket.consumptionKg / maximum) * 155) : 0}px`;
     bar.title = `${formatDate(bucket.start)}: ${value.textContent}`;
     const label = document.createElement("span");
     label.className = "bar-label";
@@ -413,7 +415,17 @@ function renderGasHistory(readings) {
   state.telemetry = readings;
   const container = byId("gas-history-chart");
   container.replaceChildren();
-  const ordered = [...readings].sort((a, b) => new Date(a.receivedAt) - new Date(b.receivedAt)).slice(-500);
+  const ordered = [...readings]
+    .filter((reading) => reading.weightStatus === "VALID"
+      && reading.cylinderPresent === true
+      && Number.isFinite(reading.gasKg)
+      && !Number.isNaN(new Date(reading.receivedAt).getTime()))
+    .sort((a, b) => {
+      const byDate = new Date(a.receivedAt) - new Date(b.receivedAt);
+      if (byDate !== 0) return byDate;
+      return String(a.id ?? "").localeCompare(String(b.id ?? ""), undefined, { numeric: true });
+    })
+    .slice(-500);
   container.classList.toggle("empty-state", ordered.length === 0);
   if (ordered.length === 0) {
     container.textContent = "Nenhuma leitura registrada.";
@@ -427,21 +439,28 @@ function renderGasHistory(readings) {
   const selectedCylinder = state.cylinderFilter === "active"
     ? state.cylinders.find((cylinder) => !cylinder.removedAt)
     : state.cylinders.find((cylinder) => String(cylinder.id) === String(state.cylinderFilter));
-  const cycleStart = selectedCylinder?.installedAt ? new Date(selectedCylinder.installedAt) : new Date(ordered[0].receivedAt);
-  const cycleEnd = selectedCylinder?.removedAt ? new Date(selectedCylinder.removedAt) : new Date();
+  const firstReadingAt = new Date(ordered[0].receivedAt);
+  const lastReadingAt = new Date(ordered.at(-1).receivedAt);
+  // O domínio termina na última leitura válida, portanto ela permanece sempre
+  // ancorada no lado direito mesmo quando a balança está sem novas amostras.
+  const cycleStart = ordered.length > 1
+    ? firstReadingAt
+    : new Date(lastReadingAt.getTime() - 60 * 60 * 1000);
+  const cycleEnd = lastReadingAt;
   const cycleStartMs = cycleStart.getTime();
   const cycleEndMs = Math.max(cycleStartMs + 1, cycleEnd.getTime());
   const selectedCapacity = selectedCylinder?.capacityKg ?? 0;
-  const min = Math.min(...values);
-  const max = Math.max(...values, selectedCapacity);
-  const span = max - Math.min(0, min) || 1;
-  const points = ordered.map((reading, index) => {
-    const readingMs = new Date(reading.receivedAt).getTime();
-    const progress = Math.min(1, Math.max(0, (readingMs - cycleStartMs) / (cycleEndMs - cycleStartMs)));
+  const min = Math.min(...values, 0);
+  const max = Math.max(...values, selectedCapacity, 0.001);
+  const span = max - min || 1;
+  const pointFor = (reading) => {
+    const index = ordered.indexOf(reading);
+    const progress = ordered.length === 1 ? 1 : index / (ordered.length - 1);
     const x = pad.left + progress * (width - pad.left - pad.right);
-    const y = height - pad.bottom - ((reading.gasKg - Math.min(0, min)) / span) * (height - pad.top - pad.bottom);
+    const y = height - pad.bottom - ((reading.gasKg - min) / span) * (height - pad.top - pad.bottom);
     return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  };
+  const points = ordered.map(pointFor);
   const ns = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(ns, "svg");
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
@@ -460,13 +479,25 @@ function renderGasHistory(readings) {
     label.textContent = `${numberFormatter.format(value)} kg`;
     svg.append(label);
   }
-  const area = document.createElementNS(ns, "polygon");
-  area.setAttribute("points", `${pad.left},${height - pad.bottom} ${points.join(" ")} ${width - pad.right},${height - pad.bottom}`);
-  area.setAttribute("class", "chart-area");
+  if (points.length > 1) {
+    const area = document.createElementNS(ns, "polygon");
+    area.setAttribute("points", `${points[0].split(",")[0]},${height - pad.bottom} ${points.join(" ")} ${points.at(-1).split(",")[0]},${height - pad.bottom}`);
+    area.setAttribute("class", "chart-area");
+    svg.append(area);
+  }
   const polyline = document.createElementNS(ns, "polyline");
   polyline.setAttribute("points", points.join(" "));
   polyline.setAttribute("class", "chart-line");
-  svg.append(area, polyline);
+  svg.append(polyline);
+  if (points.length === 1) {
+    const [cx, cy] = points[0].split(",");
+    const marker = document.createElementNS(ns, "circle");
+    marker.setAttribute("cx", cx);
+    marker.setAttribute("cy", cy);
+    marker.setAttribute("r", "4");
+    marker.setAttribute("class", "chart-line");
+    svg.append(marker);
+  }
   const dateLabels = [
     { date: cycleStart, x: pad.left, anchor: "start" },
     { date: new Date((cycleStartMs + cycleEndMs) / 2), x: (pad.left + width - pad.right) / 2, anchor: "middle" },
@@ -484,10 +515,7 @@ function renderGasHistory(readings) {
 }
 
 function fillSettings(settings) {
-  const form = byId("settings-form");
-  if (form.matches(":focus-within")) return;
-  byId("noise-kg").value = settings.noiseToleranceKg;
-  byId("refill-kg").value = settings.refillThresholdKg;
+  byId("noise-kg").textContent = formatNumber(settings.noiseToleranceKg);
 }
 
 async function refreshStatus() {
@@ -617,19 +645,6 @@ async function acknowledgeLeak(leakId) {
   }
 }
 
-async function saveSettings(event) {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const payload = Object.fromEntries([...form.entries()].map(([key, value]) => [key, Number(value)]));
-  try {
-    await api("/api/settings", { method: "PUT", body: JSON.stringify(payload) });
-    showToast("Configurações da balança salvas.");
-    await refreshAll();
-  } catch (error) {
-    showToast(error.message, true);
-  }
-}
-
 async function connectSocket() {
   try {
     if (!localStorage.getItem("smartgas_token")) {
@@ -659,7 +674,6 @@ async function connectSocket() {
 byId("open-valve").addEventListener("click", () => void sendValveCommand("OPEN"));
 byId("close-valve").addEventListener("click", () => void sendValveCommand("CLOSE"));
 byId("refresh-button").addEventListener("click", () => void refreshAll(true));
-byId("settings-form").addEventListener("submit", saveSettings);
 byId("replace-cylinder-button").addEventListener("click", () => void replaceCylinder());
 byId("replacement-start").addEventListener("click", prepareReplacement);
 byId("replacement-scale-confirm").addEventListener("click", () => void confirmScalePlacement());
@@ -688,6 +702,7 @@ for (const button of document.querySelectorAll(".period-button")) {
 
 void refreshAll();
 void connectSocket();
+setInterval(() => { if (state.status) renderStatus(state.status); }, 1000);
 setInterval(() => void refreshAll(), config.REFRESH_INTERVAL_MS);
 setInterval(() => {
   if (state.status) renderAlert(state.status);
