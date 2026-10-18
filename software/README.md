@@ -42,7 +42,7 @@ Se mudar a porta ou o endereço desta página, ajuste também `CORS_ORIGIN` no `
 - Contagem regressiva de cinco segundos antes do reconhecimento.
 - Consumo diário, semanal e mensal.
 - Histórico da balança, vazamentos e comandos.
-- Configuração de tara, capacidade e tolerâncias.
+- Configuração de tolerância de ruído e limite de reposição.
 - Atualização por Socket.IO com fallback a cada 30 segundos.
 
 O frontend não acessa Supabase ou MQTT diretamente. Todas as operações passam pela API do backend.

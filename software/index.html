@@ -193,12 +193,12 @@
           <button id="replacement-start" class="button secondary" type="button">Preparar troca</button>
           <button id="replacement-scale-confirm" class="button primary" type="button" disabled>Confirmar botijão na balança</button>
           <span id="replacement-weight-status" class="muted">A balança será lida pelo sistema após iniciar.</span>
-          <label class="replacement-gas-field">Gás inicial (kg)<input id="replacement-gas" type="number" min="0" max="100" step="0.01" /></label>
+          <label class="replacement-gas-field">Gás inicial (kg)<input id="replacement-gas" type="number" inputmode="decimal" min="0" max="100" step="0.01" aria-describedby="replacement-help" /></label>
           <label class="replacement-weight-field">Peso total (kg)<input id="initial-weight-kg" type="number" readonly /></label>
           <button id="replace-cylinder-button" class="button primary" type="button" disabled>Confirmar troca</button>
           <button id="replacement-cancel" class="button secondary" type="button" disabled>Cancelar</button>
         </div>
-        <p id="replacement-help" class="muted">Inicie a troca, coloque o botijão na balança e aguarde uma leitura estável.</p>
+        <p id="replacement-help" class="muted" aria-live="polite">Inicie a troca, coloque o botijão na balança e aguarde uma leitura estável.</p>
         <form id="settings-form" class="settings-form cylinder-settings-form">
           <label class="editable-field editable-noise">Tolerância de ruído (kg)<input id="noise-kg" name="noiseToleranceKg" type="number" min="0.001" max="5" step="0.001" required /></label>
           <label class="editable-field editable-refill">Limite de reposição (kg)<input id="refill-kg" name="refillThresholdKg" type="number" min="0.01" max="20" step="0.01" required /></label>

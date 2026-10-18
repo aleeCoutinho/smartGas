@@ -116,12 +116,6 @@ function renderCylinders(cylinders) {
   const active = cylinders.find((cylinder) => !cylinder.removedAt) ?? cylinders.at(-1);
   byId("active-cylinder-title").textContent = active ? `Botijão ${active.number}` : "Botijão atual";
   byId("active-cylinder-installed").textContent = active ? `Instalado em ${formatDate(active.installedAt)}` : "Nenhum ciclo selecionado";
-  const hasLiveReading = Boolean(state.status?.deviceOnline && state.status?.lastSeenAt);
-  if (active && hasLiveReading) {
-    byId("initial-weight-kg").value = active.initialWeightKg ?? "";
-  } else {
-    byId("initial-weight-kg").value = "";
-  }
   if (!state.replacement) byId("replacement-start").disabled = !active;
 }
 
@@ -134,6 +128,7 @@ function renderReplacement(replacement) {
   byId("replacement-cancel").disabled = !pending && !state.replacementArmed;
   byId("replacement-gas").disabled = !pending && !state.replacementArmed;
   if (!pending) {
+    byId("initial-weight-kg").value = "";
     byId("replacement-weight-status").textContent = state.replacementArmed
       ? "Aguardando confirmação de posicionamento."
       : "A balança será lida após a confirmação.";
@@ -156,12 +151,30 @@ function renderReplacement(replacement) {
 
 function updateReplacementConfirmButton() {
   const replacement = state.replacement;
-  const gas = Number(byId("replacement-gas").value);
+  const gasInput = byId("replacement-gas");
+  const gas = Number.isFinite(gasInput.valueAsNumber)
+    ? gasInput.valueAsNumber
+    : Number(gasInput.value.trim().replace(",", "."));
+  const measuredWeight = Number(replacement?.measuredWeightKg);
   const valid = Boolean(replacement?.weightStable)
     && Number.isFinite(gas)
     && gas > 0
-    && gas < Number(replacement.measuredWeightKg);
+    && Number.isFinite(measuredWeight)
+    && gas < measuredWeight;
   byId("replace-cylinder-button").disabled = !valid;
+
+  if (!replacement) return;
+  if (replacement.measuredWeightKg == null) {
+    byId("replacement-help").textContent = "Aguardando uma leitura da balança.";
+  } else if (!replacement.weightStable) {
+    byId("replacement-help").textContent = "Mantenha o botijão parado até a leitura ficar estável.";
+  } else if (!Number.isFinite(gas) || gas <= 0) {
+    byId("replacement-help").textContent = `Informe o gás inicial, maior que zero e menor que ${formatNumber(measuredWeight, " kg")}.`;
+  } else if (gas >= measuredWeight) {
+    byId("replacement-help").textContent = `O gás inicial deve ser menor que o peso total medido (${formatNumber(measuredWeight, " kg")}).`;
+  } else {
+    byId("replacement-help").textContent = `Dados válidos. A tara calculada será ${formatNumber(measuredWeight - gas, " kg")}.`;
+  }
 }
 
 function cylinderQuery() {
@@ -453,8 +466,6 @@ function renderGasHistory(readings) {
 function fillSettings(settings) {
   const form = byId("settings-form");
   if (form.matches(":focus-within")) return;
-  const hasLiveReading = Boolean(state.status?.deviceOnline && state.status?.lastSeenAt);
-  byId("initial-weight-kg").value = hasLiveReading ? (settings.initialWeightKg ?? "") : "";
   byId("noise-kg").value = settings.noiseToleranceKg;
   byId("refill-kg").value = settings.refillThresholdKg;
 }
@@ -497,7 +508,10 @@ async function refreshAll(showSuccess = false) {
 }
 
 async function replaceCylinder() {
-  const initialGasKg = Number(byId("replacement-gas").value);
+  const gasInput = byId("replacement-gas");
+  const initialGasKg = Number.isFinite(gasInput.valueAsNumber)
+    ? gasInput.valueAsNumber
+    : Number(gasInput.value.trim().replace(",", "."));
   const measuredWeightKg = Number(state.replacement?.measuredWeightKg);
   if (!state.replacement?.weightStable) {
     showToast("Confirme o botijão na balança e aguarde uma leitura estável.", true);
@@ -586,7 +600,6 @@ async function saveSettings(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const payload = Object.fromEntries([...form.entries()].map(([key, value]) => [key, Number(value)]));
-  payload.capacityKg = state.status?.settings?.capacityKg ?? state.status?.settings?.initialGasKg ?? 13;
   try {
     await api("/api/settings", { method: "PUT", body: JSON.stringify(payload) });
     showToast("Configurações da balança salvas.");
