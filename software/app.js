@@ -241,6 +241,41 @@ function renderAlert(status) {
   }
 }
 
+function requestConfirmation({ title, message, confirmLabel = "Confirmar", danger = false }) {
+  const modal = byId("confirm-modal");
+  const accept = byId("confirm-accept");
+  const cancel = byId("confirm-cancel");
+  byId("confirm-title").textContent = title;
+  byId("confirm-message").textContent = message;
+  accept.textContent = confirmLabel;
+  accept.classList.toggle("danger", danger);
+  accept.classList.toggle("primary", !danger);
+  modal.classList.remove("hidden");
+  accept.focus();
+  return new Promise((resolve) => {
+    const finish = (confirmed) => {
+      modal.classList.add("hidden");
+      accept.removeEventListener("click", onAccept);
+      cancel.removeEventListener("click", onCancel);
+      modal.removeEventListener("click", onBackdrop);
+      document.removeEventListener("keydown", onKeydown);
+      resolve(confirmed);
+    };
+    const onAccept = () => finish(true);
+    const onCancel = () => finish(false);
+    const onBackdrop = (event) => {
+      if (event.target.dataset.confirmCancel === "true") finish(false);
+    };
+    const onKeydown = (event) => {
+      if (event.key === "Escape") finish(false);
+    };
+    accept.addEventListener("click", onAccept);
+    cancel.addEventListener("click", onCancel);
+    modal.addEventListener("click", onBackdrop);
+    document.addEventListener("keydown", onKeydown);
+  });
+}
+
 function renderValveControls() {
   const open = byId("open-valve");
   const close = byId("close-valve");
@@ -597,7 +632,11 @@ async function replaceCylinder() {
     showToast("O gás inicial deve ser maior que zero e menor que o peso total medido.", true);
     return;
   }
-  if (!window.confirm("Confirma a troca do botijão? O ciclo atual será encerrado.")) return;
+  if (!await requestConfirmation({
+    title: "Confirmar troca de botijão?",
+    message: "O ciclo atual será encerrado e um novo botijão será registrado.",
+    confirmLabel: "Confirmar troca",
+  })) return;
   try {
     await api("/api/cylinders/replacement/confirm", { method: "POST", body: JSON.stringify({ initialGasKg }) });
     byId("replacement-gas").value = "";
@@ -641,7 +680,14 @@ function scheduleRefresh() {
 }
 
 async function sendValveCommand(action) {
-  if (action === "OPEN" && !window.confirm("Confirma a abertura da válvula?")) return;
+  if (!await requestConfirmation({
+    title: action === "OPEN" ? "Abrir válvula?" : "Fechar válvula?",
+    message: action === "OPEN"
+      ? "Confirma a abertura da válvula de gás?"
+      : "Confirma o fechamento da válvula de gás?",
+    confirmLabel: action === "OPEN" ? "Abrir válvula" : "Fechar válvula",
+    danger: action === "OPEN",
+  })) return;
   state.commandPending = true;
   renderValveControls();
   try {

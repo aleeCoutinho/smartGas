@@ -133,6 +133,22 @@
         <button id="banner-ack-button" class="button warning hidden" type="button">Reconhecer alerta</button>
       </section>
 
+      <div id="confirm-modal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <div class="confirm-modal__backdrop" data-confirm-cancel="true" aria-hidden="true"></div>
+        <section class="confirm-modal__card">
+          <div class="confirm-modal__icon" aria-hidden="true">?</div>
+          <div class="confirm-modal__content">
+            <p class="eyebrow">Confirmação</p>
+            <strong id="confirm-title">Confirmar ação</strong>
+            <p id="confirm-message"></p>
+          </div>
+          <div class="confirm-modal__actions">
+            <button id="confirm-cancel" class="button secondary" type="button">Cancelar</button>
+            <button id="confirm-accept" class="button primary" type="button">Confirmar</button>
+          </div>
+        </section>
+      </div>
+
       <section class="section-heading">
         <div>
           <p class="eyebrow">Situação atual</p>
