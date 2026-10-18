@@ -504,6 +504,13 @@ function renderGasHistory(readings) {
   const hideTooltip = () => tooltip.classList.add("hidden");
   for (const [index, reading] of ordered.entries()) {
     const [cx, cy] = points[index].split(",");
+    const dot = document.createElementNS(ns, "circle");
+    dot.setAttribute("cx", cx);
+    dot.setAttribute("cy", cy);
+    dot.setAttribute("r", "3.5");
+    dot.setAttribute("class", "chart-point");
+    dot.setAttribute("aria-hidden", "true");
+    svg.append(dot);
     const hit = document.createElementNS(ns, "circle");
     hit.setAttribute("cx", cx);
     hit.setAttribute("cy", cy);
@@ -517,15 +524,6 @@ function renderGasHistory(readings) {
     hit.addEventListener("focus", () => showTooltip(reading));
     hit.addEventListener("blur", hideTooltip);
     svg.append(hit);
-  }
-  if (points.length === 1) {
-    const [cx, cy] = points[0].split(",");
-    const marker = document.createElementNS(ns, "circle");
-    marker.setAttribute("cx", cx);
-    marker.setAttribute("cy", cy);
-    marker.setAttribute("r", "4");
-    marker.setAttribute("class", "chart-line");
-    svg.append(marker);
   }
   const dateLabels = [
     { date: cycleStart, x: pad.left, anchor: "start" },
