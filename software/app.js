@@ -539,13 +539,16 @@ function renderGasHistory(readings) {
   const hideTooltip = () => tooltip.classList.add("hidden");
   for (const [index, reading] of ordered.entries()) {
     const [cx, cy] = points[index].split(",");
-    const dot = document.createElementNS(ns, "circle");
-    dot.setAttribute("cx", cx);
-    dot.setAttribute("cy", cy);
-    dot.setAttribute("r", "3.5");
-    dot.setAttribute("class", "chart-point");
-    dot.setAttribute("aria-hidden", "true");
-    svg.append(dot);
+    const previous = ordered[index - 1];
+    if (!previous || reading.gasKg !== previous.gasKg) {
+      const dot = document.createElementNS(ns, "circle");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", cy);
+      dot.setAttribute("r", "3.5");
+      dot.setAttribute("class", "chart-point");
+      dot.setAttribute("aria-hidden", "true");
+      svg.append(dot);
+    }
     const hit = document.createElementNS(ns, "circle");
     hit.setAttribute("cx", cx);
     hit.setAttribute("cy", cy);
