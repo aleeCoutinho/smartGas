@@ -84,10 +84,27 @@ function renderStatus(status) {
   setBadge(byId("backend-badge"), "Backend conectado", "ok");
   setBadge(byId("central-badge"), status.deviceOnline ? "ESP1 online" : "ESP1 offline", status.deviceOnline ? "ok" : "danger");
 
-  byId("last-update").textContent = status.lastSeenAt ? `Última medição: ${formatDate(status.lastSeenAt)}` : "Nenhuma medição recebida";
-  byId("gas-percentage").textContent = formatNumber(status.gasPercentage, "%");
-  byId("gas-weight").textContent = `${formatNumber(status.gasKg, " kg")} disponíveis`;
-  byId("gas-progress").style.width = `${Math.min(100, Math.max(0, status.gasPercentage ?? 0))}%`;
+  const scaleStates = {
+    VALID: [status.cylinderPresent === false ? "Botijão ausente" : "Balança pronta", status.cylinderPresent === false ? "warning" : "ok"],
+    UNCALIBRATED: ["Balança sem calibração", "warning"],
+    UNAVAILABLE: ["HX711 indisponível", "danger"],
+    INVALID: ["Leitura inválida", "danger"],
+    LEGACY: ["Firmware da balança desatualizado", "warning"],
+  };
+  const [scaleText, scaleType] = status.deviceOnline
+    ? (scaleStates[status.weightStatus] ?? ["Balança desconhecida", "neutral"])
+    : ["Medição desatualizada", "neutral"];
+  setBadge(byId("scale-badge"), scaleText, scaleType);
+
+  const currentWeightIsUsable = status.deviceOnline && status.weightStatus === "VALID" && status.cylinderPresent === true;
+  byId("last-update").textContent = currentWeightIsUsable && status.lastSeenAt
+    ? `Última medição: ${formatDate(status.lastSeenAt)}`
+    : "Aguardando uma nova leitura válida";
+  byId("gas-percentage").textContent = currentWeightIsUsable ? formatNumber(status.gasPercentage, "%") : "—";
+  byId("gas-weight").textContent = currentWeightIsUsable
+    ? `${formatNumber(status.gasKg, " kg")} disponíveis`
+    : status.cylinderPresent === false ? "Botijão ausente da balança" : scaleText;
+  byId("gas-progress").style.width = currentWeightIsUsable ? `${Math.min(100, Math.max(0, status.gasPercentage ?? 0))}%` : "0%";
   byId("valve-state").textContent = valveLabel(status.valveState);
   byId("mq2-value").textContent = formatNumber(status.mq2Raw);
   byId("leak-state").textContent = status.leakActive ? "Vazamento detectado" : "Nenhum vazamento ativo";
@@ -122,7 +139,8 @@ function renderCylinders(cylinders) {
 function renderReplacement(replacement) {
   state.replacement = replacement;
   const pending = Boolean(replacement);
-  const stable = Boolean(replacement?.weightStable);
+  const lastReadingAt = replacement?.lastReadingAt ? new Date(replacement.lastReadingAt).getTime() : 0;
+  const stable = Boolean(replacement?.weightStable) && Date.now() - lastReadingAt <= 45_000;
   byId("replacement-start").disabled = pending || state.replacementArmed;
   byId("replacement-scale-confirm").disabled = pending || !state.replacementArmed;
   byId("replacement-cancel").disabled = !pending && !state.replacementArmed;
@@ -140,7 +158,7 @@ function renderReplacement(replacement) {
   }
   byId("replacement-weight-status").textContent = replacement.measuredWeightKg == null
     ? "Aguardando leitura da balança..."
-    : `Peso total medido: ${formatNumber(replacement.measuredWeightKg, " kg")} (${stable ? "leitura estável" : "estabilizando"})`;
+    : `Peso total medido: ${formatNumber(replacement.measuredWeightKg, " kg")} (${stable ? "leitura válida" : "leitura expirada"})`;
   byId("initial-weight-kg").value = replacement.measuredWeightKg ?? "";
   byId("replacement-help").textContent = stable
     ? "Informe o gás inicial e confirme a troca."
@@ -156,7 +174,9 @@ function updateReplacementConfirmButton() {
     ? gasInput.valueAsNumber
     : Number(gasInput.value.trim().replace(",", "."));
   const measuredWeight = Number(replacement?.measuredWeightKg);
-  const valid = Boolean(replacement?.weightStable)
+  const lastReadingAt = replacement?.lastReadingAt ? new Date(replacement.lastReadingAt).getTime() : 0;
+  const fresh = Date.now() - lastReadingAt <= 45_000;
+  const valid = Boolean(replacement?.weightStable) && fresh
     && Number.isFinite(gas)
     && gas > 0
     && Number.isFinite(measuredWeight)
@@ -166,8 +186,8 @@ function updateReplacementConfirmButton() {
   if (!replacement) return;
   if (replacement.measuredWeightKg == null) {
     byId("replacement-help").textContent = "Aguardando uma leitura da balança.";
-  } else if (!replacement.weightStable) {
-    byId("replacement-help").textContent = "Mantenha o botijão parado até a leitura ficar estável.";
+  } else if (!replacement.weightStable || !fresh) {
+    byId("replacement-help").textContent = "Aguardando uma leitura nova e válida da balança.";
   } else if (!Number.isFinite(gas) || gas <= 0) {
     byId("replacement-help").textContent = `Informe o gás inicial, maior que zero e menor que ${formatNumber(measuredWeight, " kg")}.`;
   } else if (gas >= measuredWeight) {
@@ -513,8 +533,9 @@ async function replaceCylinder() {
     ? gasInput.valueAsNumber
     : Number(gasInput.value.trim().replace(",", "."));
   const measuredWeightKg = Number(state.replacement?.measuredWeightKg);
-  if (!state.replacement?.weightStable) {
-    showToast("Confirme o botijão na balança e aguarde uma leitura estável.", true);
+  const lastReadingAt = state.replacement?.lastReadingAt ? new Date(state.replacement.lastReadingAt).getTime() : 0;
+  if (!state.replacement?.weightStable || Date.now() - lastReadingAt > 45_000) {
+    showToast("Confirme o botijão na balança e aguarde uma leitura nova e válida.", true);
     return;
   }
   if (!Number.isFinite(initialGasKg) || initialGasKg <= 0 || initialGasKg >= measuredWeightKg) {
