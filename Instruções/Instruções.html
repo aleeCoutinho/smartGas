@@ -124,7 +124,6 @@
             </p>
             <div class="hero__actions">
               <a class="btn btn--primary" href="#passos">Ver montagem</a>
-              <a class="btn btn--secondary" href="#demonstracao">Assistir demonstração</a>
             </div>
           </div>
 
@@ -276,80 +275,6 @@
         </div>
       </section>
 
-      <!-- ==========================================================
-           SEÇÃO 3 — Vídeo demonstrativo (Figma 442:2 / 443:2)
-
-           COMO COLOCAR O VÍDEO — passo a passo:
-
-           1. Salve o arquivo em  assets/video/demonstracao.mp4
-              (crie a pasta "video" dentro de assets). O nome pode ser
-              outro, desde que você troque o src do <source> abaixo.
-              MP4 (codec H.264) toca em todos os navegadores.
-
-           2. Opcional, mas recomendado: salve também um print do
-              primeiro quadro em assets/img/Instruções/capa-video.jpg
-              e coloque no atributo poster="" — é a imagem que aparece
-              antes de a pessoa dar play, no lugar de um quadro preto.
-
-           3. Troque a classe da <figure> para
-              class="video-player video-player--live"
-              (deixa a borda sólida, em vez de tracejada) e apague o
-              bloco .video-player__placeholder logo abaixo.
-
-           O que cada atributo do <video> faz:
-             controls  → mostra os botões de play, volume, tela cheia
-             preload="metadata" → baixa só a duração/dimensões ao abrir
-                         a página, não o vídeo inteiro (economiza dados)
-             playsinline → no iPhone, toca dentro da página em vez de
-                         abrir o player em tela cheia
-             poster    → imagem de capa antes do play
-
-           SE O VÍDEO ESTIVER NO YOUTUBE em vez de um arquivo local,
-           apague o <video> inteiro e use no lugar dele:
-
-           <iframe class="video-player__media"
-                   src="https://www.youtube.com/embed/ID_DO_VIDEO"
-                   title="Demonstração do SmartGás"
-                   allow="accelerometer; autoplay; clipboard-write;
-                          encrypted-media; gyroscope; picture-in-picture"
-                   allowfullscreen></iframe>
-
-           (o ID é o que vem depois de "watch?v=" no endereço do vídeo)
-           ========================================================== -->
-      <section class="section" id="demonstracao">
-        <div class="container">
-          <div class="section-head">
-            <span class="eyebrow">DEMONSTRAÇÃO</span>
-            <h2 class="t-h2">Veja o sistema funcionando na prática</h2>
-            <p class="t-body-m lede">
-              O vídeo abaixo mostra a montagem experimental, o fluxo de ar pela válvula, a leitura da balança e a chegada da telemetria ao painel.
-            </p>
-          </div>
-
-          <figure class="video-player">
-
-            <!-- Camada de baixo: o "espaço reservado" do Figma.
-                 Continua aparecendo enquanto o arquivo do vídeo não
-                 existir. Apague este bloco quando o vídeo entrar. -->
-            <div class="video-player__placeholder">
-              <span class="video-player__badge" aria-hidden="true"></span>
-              <p class="video-player__title">Espaço reservado para a demonstração</p>
-              <p class="video-player__meta">Montagem experimental · ar atmosférico · telemetria do SafeGas</p>
-            </div>
-
-            <!-- Camada de cima: o vídeo de verdade. -->
-            <video class="video-player__media"
-                   controls
-                   preload="metadata"
-                   playsinline>
-              <source src="../assets/video/demonstracao.mp4" type="video/mp4">
-              <!-- Texto de reserva: só aparece em navegador sem suporte a vídeo -->
-              Seu navegador não consegue exibir vídeos.
-              <a href="../assets/video/demonstracao.mp4">Baixe o arquivo aqui.</a>
-            </video>
-          </figure>
-        </div>
-      </section>
     </main>
 
     <footer class="footer">
