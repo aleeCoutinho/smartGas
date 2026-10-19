@@ -116,12 +116,12 @@
         <div class="container hero__grid">
           <div class="hero__copy">
             <span class="eyebrow">PRODUTO</span>
-            <h1 class="t-display">O controle do seu gás de onde você estiver</h1>
+            <h1 class="t-display">Monitoramento e segurança para uma demonstração conectada</h1>
             <p class="t-body-l">
-              O smartGas Shield monitora o nível do gás, detecta vazamentos e permite desligar o fogão pelo celular com uma experiência simples e segura.
+              O SafeGas é um protótipo acadêmico de robótica que demonstra monitoramento de gás, acompanhamento de massa, alertas e controle experimental de uma válvula pneumática.
             </p>
             <div class="hero__actions">
-              <a class="btn btn--primary" href="#materiais">Quero comprar</a>
+              <a class="btn btn--primary" href="#materiais">Ver componentes</a>
               <a class="btn btn--secondary" href="#Funcionamento">Saiba mais</a>
               <a class="btn btn--secondary" href="../conta/conta.html">Acessar o app</a>
             </div>
@@ -131,7 +131,7 @@
 
             <img src="../assets/img/Produto/Imagem hero.svg"
             width= '550' height = '460'
-                 alt="Cozinha residencial com o kit SmartGás instalado junto ao fogão"
+                 alt="Ilustração conceitual do protótipo SafeGas"
             />
           </figure>
         </div>
@@ -143,33 +143,32 @@
             <span class="eyebrow">FUNCIONAMENTO</span>
             <h2 class="t-h2">Confira como funciona nosso produto</h2>
             <p class="t-body-m lede">
-              A central reúne sensores e atuadores calibrados para interpretar
-               sinais do ambiente e reagir automaticamente quando necessário.
+              Dois módulos físicos trabalham em conjunto: o ESP32 da cozinha acompanha o MQ-2 e sinaliza o alerta; o ESP32 central recebe esses dados, lê a balança, controla a válvula e publica a telemetria.
             </p>
           </div>
 
           <div class="grid-3">
             <span class="card">
               <span class="card__icon" aria-hidden="true">G</span>
-              <h3 class="t-h4">Sensor de gás</h3>
+              <h3 class="t-h4">Módulo da cozinha</h3>
               <p class="t-body-s card__body">
-                Detecta possíveis vazamentos e aciona alertas para o usuário.
+                O ESP32 #2 lê o MQ-2, aciona o buzzer e envia o estado do vazamento ao ESP32 #1 por ESP-NOW.
               </p>
             </span>
 
             <span class="card">
               <span class="card__icon" aria-hidden="true">M</span>
-              <h3 class="t-h4">Servo motor</h3>
+              <h3 class="t-h4">Módulo central</h3>
               <p class="t-body-s card__body">
-                Atua mecanicamnete no botão do fogão para auxiliar no desligamento.
+                O ESP32 #1 recebe o alerta, lê a célula pelo HX711, comanda o relé da FA0520E e envia telemetria por MQTT.
               </p>
             </span>
 
             <span class="card">
               <span class="card__icon" aria-hidden="true">P</span>
-              <h3 class="t-h4">Célula de carga</h3>
+              <h3 class="t-h4">Balança experimental</h3>
               <p class="t-body-s card__body">
-                Mede o peso do botijão para estimar o nível disponível.
+                A célula de carga de 20 kg mede a massa total sobre a plataforma. Após tara e calibração, o sistema pode estimar o conteúdo de forma didática.
               </p>
             </span>
           </div>
@@ -180,34 +179,34 @@
         <div class="container">
           <div class="section-head">
             <span class="eyebrow">INSTALAÇÃO</span>
-            <h2 class="t-h2">Instalação de forma prática e eficiente</h2>
+            <h2 class="t-h2">Arquitetura do protótipo</h2>
             <p class="t-body-m lede">
-              O fluxo abaixo organiza as etapas presentes no material original em um passo a passo mais claro.
+              O SafeGas é experimental e não é um equipamento pronto para instalação residencial ou para uso com GLP real.
             </p>
           </div>
 
           <div class="grid-3-2">
             <span class="card">
               <span class="card__icon" aria-hidden="true">1</span>
-              <h3 class="t-h4">1. Posicione o botijão</h3>
+              <h3 class="t-h4">1. ESP32 #2 — cozinha</h3>
               <p class="t-body-s card__body">
-                Coloque o botijão de gás sobre a balança para iniciar o monitoramento do peso.
+                MQ-2, buzzer, indicadores quando instalados e fonte de 5 V. O módulo não se comunica diretamente com o backend.
               </p>
             </span>
 
             <span class="card">
               <span class="card__icon" aria-hidden="true">2</span>
-              <h3 class="t-h4">2. Instale a válvula e o motor</h3>
+              <h3 class="t-h4">2. ESP32 #1 — central</h3>
               <p class="t-body-s card__body">
-                A válvula fica no regulador e o motor é ajustado no botão do fogão.
+                HX711, célula de carga, relé, FA0520E, bomba de ar, conversor LM2596 e fontes separadas de 12 V e 5 V.
               </p>
             </span>
 
             <span class="card">
               <span class="card__icon" aria-hidden="true">3</span>
-              <h3 class="t-h4">3. Ligue o dispositivo</h3>
+              <h3 class="t-h4">3. Backend e painel</h3>
               <p class="t-body-s card__body">
-                Conecte a central na tomada e acompanhe os dados pelo aplicativo.
+                O ESP32 #1 publica MQTT no Mosquitto; o backend Node.js/TypeScript persiste os dados e atualiza o painel por Socket.IO.
               </p>
             </span>
           </div>
@@ -218,77 +217,76 @@
         <div class="container">
           <div class="section-head">
             <span class="eyebrow">LISTA DE MATERIAIS</span>
-            <h2 class="t-h2">Instalação de forma prática e eficiente</h2>
+            <h2 class="t-h2">Componentes do protótipo</h2>
             <p class="t-body-m lede">
-              Onze componentes de prateleira, sem peças sob encomenda.
-              Os valores são médias de mercado e podem variar conforme o fornecedor.
+              A montagem usa componentes de prototipagem. As imagens e descrições abaixo identificam a função de cada conjunto; não representam um kit certificado ou pronto para venda.
             </p>
           </div>
 
           <div class="materials">
             <span class="material__container">
               <img src="../assets/img/Produto/Card/Foto.svg" alt="Placa ESP32" />
-              <h3 class="item__title">ESP 32</h3>
+              <h3 class="item__title">ESP32 DevKit V1 — central</h3>
               <p class="material__desc">
-                O cérebro do projeto: lê o sensor e comanda todos os atuadores.
+                Recebe o ESP-NOW, processa a balança, controla o relé e comunica-se com o backend por Wi-Fi/MQTT.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 45,00</span>
+                Módulo principal do protótipo
               </p>
             </span>
 
             <span class="material__container">
               <img src="../assets//img/Produto/image 1.svg" alt="Sensor de gás MQ-2" />
-              <h3 class="item__title">Sensor MQ-2</h3>
+              <h3 class="item__title">ESP32 DevKit V1 — cozinha</h3>
               <p class="material__desc">
-                Detecta GLP no ar e dispara o alerta de vazamento.
+                Faz a leitura do MQ-2, controla o buzzer e envia as amostras ao ESP32 central por ESP-NOW.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 15,00</span>
+                Módulo de monitoramento local
               </p>
             </span>
 
             <span class="material__container">
-              <img src="../assets/img/Produto/Card/Foto-5.svg" alt="Célula de carga de 5 kg" />
-              <h3 class="item__title">Célula de carga 5 kg</h3>
+              <img src="../assets/img/Produto/Card/Foto-5.svg" alt="Célula de carga de 20 kg" />
+              <h3 class="item__title">Sensor MQ-2</h3>
               <p class="material__desc">
-                Mede o peso do botijão para estimar o gás restante.
+                Sensor analógico usado para demonstrar a detecção de gases; seus limites dependem de calibração e do ambiente.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 25,00</span>
+                Sensor de demonstração
               </p>
             </span>
 
             <span class="material__container">
               <img src="../assets/img/Produto/Card/image.png" alt="Módulo amplificador HX711" />
-              <h3 class="item__title">Módulo HX711</h3>
+              <h3 class="item__title">Célula de carga de 20 kg</h3>
               <p class="material__desc">
-                Amplifica e converte o sinal da célula de carga para o ESP32.
+                Mede a massa aplicada à plataforma; não foi usada com um botijão P13 real nos testes descritos.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 12,00</span>
+                Elemento sensor da balança
               </p>
             </span>
 
             <span class="material__container">
-              <img src="../assets/img/Produto/Card/Foto-2.svg" alt="Servo motor SG90" />
-              <h3 class="item__title">Servo motor SG90</h3>
+              <img src="../assets/img/Produto/Card/Foto-2.svg" alt="Válvula pneumática FA0520E" />
+              <h3 class="item__title">Módulo HX711</h3>
               <p class="material__desc">
-                Gira o registro do fogão para fechar o gás automaticamente.
+                Converte o sinal elétrico da célula de carga em dados digitais para o ESP32 central.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 20,00</span>
+                Conversor e amplificador
               </p>
             </span>
 
             <span class="material__container">
               <img src="../assets/img/Produto/Card/Foto-7.svg" alt="Buzzer ativo de 5 volts" />
-              <h3 class="item__title">Buzzer 5 V</h3>
+              <h3 class="item__title">Buzzer e indicadores</h3>
               <p class="material__desc">
-                Alarme sonoro local, para quem estiver dentro de casa.
+                Sinalização local do módulo da cozinha. A intensidade é ajustada conforme o sinal, dentro das capacidades do buzzer.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 5,00</span>
+                Alerta local
               </p>
             </span>
 
@@ -296,64 +294,64 @@
 
             <span class="material__container">
               <img src="../assets/img/Produto/Card/Foto-9.svg" alt="Protoboard de 830 pontos" />
-              <h3 class="item__title">Protoboard 830 pts</h3>
+              <h3 class="item__title">Módulo relé de 5 V</h3>
               <p class="material__desc">
-                Base de montagem do circuito, sem necessidade de solda.
+                Interface de acionamento usada pelo ESP32 central para controlar a bobina da válvula.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 22,00</span>
+                Acionamento elétrico
               </p>
             </span>
 
             <span class="material__container">
               <img src="../assets/img/Produto/Card/Foto-10.svg" alt="Kit de cabos jumper" />
-              <h3 class="item__title">Kit de jumpers</h3>
+              <h3 class="item__title">FA0520E pneumática de 12 V</h3>
               <p class="material__desc">
-                Conexões entre a placa, os sensores e os atuadores.
+                Válvula de três vias usada exclusivamente na demonstração com ar atmosférico.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 18,00</span>
+                Atuador experimental
               </p>
             </span>
 
             <span class="material__container">
-              <img src="../assets/img/Produto/Card/Foto-4.svg" alt="Módulo Mosfet" />
-              <h3 class="item__title">Módulo Mosfet</h3>
+              <img src="../assets/img/Produto/Card/Foto-4.svg" alt="Mini bomba de ar de 12 volts" />
+              <h3 class="item__title">Mini bomba de ar de 12 V</h3>
               <p class="material__desc">
-                Controla a passagem de corrente para os atuadores.
+                Produz o fluxo de ar que permite observar a atuação pneumática da FA0520E.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 18,00</span>
+                Circuito somente com ar
               </p>
             </span>
 
             <span class="material__container">
               <img src="../assets/img/Produto/Card/Foto-8.svg" alt="Fonte de 5 volts e 2 amperes" />
-              <h3 class="item__title">Fonte 5 V / 2 A</h3>
+              <h3 class="item__title">Fontes e conversor LM2596</h3>
               <p class="material__desc">
-                Alimenta a central ligada na tomada, em operação contínua.
+                Fonte de 12 V para atuadores e fonte independente de 5 V para o ESP32, com conversão conforme a montagem.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 30,00</span>
+                Alimentação do protótipo
               </p>
             </span>
 
             <span class="material__container">
               <img src="../assets/img/Produto/Card/caixa_safegas (1).svg" alt="Caixa de proteção em ABS" />
-              <h3 class="item__title">Caixa de proteção</h3>
+              <h3 class="item__title">Estrutura, fios e conectores</h3>
               <p class="material__desc">
-                Abriga a eletrônica e protege o conjunto contra calor e gordura.
+                Protoboard, jumpers, conectores e suporte mecânico usados para montar e organizar a demonstração.
               </p>
               <p class="text__value">
-                VALOR MÉDIO: <span class="text__price">R$ 28,00</span>
+                Montagem experimental
               </p>
             </span>
 
             <span class="material__container material__container--total">
               <div class="material-total">
-                <h2 class="materials__total-label">TOTAL DO PROJETO</h2>
-                <p class="material-total__price">R$ 238,00</p>
-                <p class="material-total__note">11 componentes · valores médios · protótipo montado</p>
+                <h2 class="materials__total-label">AVISO DE ESCOPO</h2>
+                <p class="material-total__price">Protótipo acadêmico</p>
+                <p class="material-total__note">Componentes de demonstração · sem GLP real · não destinado à instalação residencial</p>
               </div>
             </span>
           </div>
@@ -370,37 +368,37 @@
             <ul class="shield__list">
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Proteção inteligente</p>
+                <p class="t-body-m">Monitoramento por MQ-2</p>
               </li>
 
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Controle total pelo aplicativo</p>
+                <p class="t-body-m">Alertas locais por buzzer</p>
               </li>
 
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Monitoramento em tempo real</p>
+                <p class="t-body-m">Peso acompanhado por HX711</p>
               </li>
 
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Conectividade Wi-Fi integrada</p>
+                <p class="t-body-m">ESP-NOW entre os módulos</p>
               </li>
 
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Sistema automático de segurança</p>
+                <p class="t-body-m">Controle experimental da válvula</p>
               </li>
 
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Compatibilidade universal</p>
+                <p class="t-body-m">Telemetria MQTT pelo ESP32 central</p>
               </li>
 
               <li class="shield__item">
                 <span class="card__icon" aria-hidden="true">✓</span>
-                <p class="t-body-m">Design premium e compacto</p>
+                <p class="t-body-m">Painel web com histórico e alertas</p>
               </li>
             </ul>
           </div>
@@ -426,10 +424,10 @@
         <nav class="footer__sitemap" aria-label="Mapa do site">
           <a href="../index.html">Início</a>
           <a href="./produto.html">Produto</a>
-          <a href="../instrucoes.html">Instruções</a>
-          <a href="../equipe.html">Equipe</a>
-          <a href="../jogo.html">Jogo</a>
-          <a href="../refs.html">Refs</a>
+          <a href="../Instruções/Instruções.html">Instruções</a>
+          <a href="../Equipe/Equipe.html">Equipe</a>
+          <a href="../Jogo/Jogo.html">Jogo</a>
+          <a href="../Refs/Refs.html">Refs</a>
           <a href="../software/index.html">Painel</a>
         </nav>
 

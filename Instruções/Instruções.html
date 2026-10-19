@@ -118,13 +118,12 @@
         <div class="container hero__grid">
           <div class="hero__copy">
             <span class="eyebrow">INSTRUÇÕES</span>
-            <h1 class="t-display">Instale e use em 4 passos</h1>
+            <h1 class="t-display">Monte e demonstre em segurança</h1>
             <p class="t-body-l">
-              Um manual direto para montar o SmartGás Shield, conectar o aplicativo e
-              deixar a cozinha protegida. Siga na ordem — cada passo leva poucos minutos.
+              Este guia organiza a montagem acadêmica do SafeGas, a calibração da balança e os testes de comunicação. O protótipo usa ar atmosférico e não deve ser instalado em uma rede residencial de GLP.
             </p>
             <div class="hero__actions">
-              <a class="btn btn--primary" href="#passos">Ver passo a passo</a>
+              <a class="btn btn--primary" href="#passos">Ver montagem</a>
               <a class="btn btn--secondary" href="#demonstracao">Assistir demonstração</a>
             </div>
           </div>
@@ -132,7 +131,7 @@
           <figure class="hero__media">
             <img src="../assets/img/Instruções/Imagem hero.svg"
                  width="640" height="440"
-                 alt="Família na cozinha com o SmartGás Shield instalado e funcionando">
+                 alt="Ilustração conceitual do protótipo SafeGas em uma cozinha">
           </figure>
         </div>
       </section>
@@ -141,46 +140,45 @@
         <div class="container">
           <div class="section-head">
             <span class="eyebrow">ANTES DE COMEÇAR</span>
-            <h2 class="t-h2">Separe os itens da caixa</h2>
+            <h2 class="t-h2">Separe os módulos e componentes</h2>
             <p class="t-body-m lede">
-              Confira se todos os componentes abaixo estão em mãos antes da instalação.
-              A lista completa com valores está na página de Produto.
+              Confira os componentes antes de energizar. Não conecte a FA0520E a uma instalação de GLP e não use um botijão P13 real sobre a balança.
             </p>
           </div>
 
           <ul class="checklist">
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>ESP32
+              <span class="checklist__dot" aria-hidden="true"></span>ESP32 #2 + fonte de 5 V
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Sensor de gás MQ-2
+              <span class="checklist__dot" aria-hidden="true"></span>MQ-2, buzzer e LEDs indicadores
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Micro servo motor SG90
+              <span class="checklist__dot" aria-hidden="true"></span>ESP32 #1 + fonte independente de 5 V
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Válvula solenoide 12V
+              <span class="checklist__dot" aria-hidden="true"></span>HX711 + célula de carga de 20 kg
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Módulo relé 1 canal 5V
+              <span class="checklist__dot" aria-hidden="true"></span>Relé de 5 V
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Célula de carga 50 kg
+              <span class="checklist__dot" aria-hidden="true"></span>FA0520E pneumática de 12 V
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Display LCD 16x2 com I2C
+              <span class="checklist__dot" aria-hidden="true"></span>Mini bomba de ar de 12 V
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Buzzer ativo 5V
+              <span class="checklist__dot" aria-hidden="true"></span>Conversor LM2596
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Fonte de alimentação 12V 2A
+              <span class="checklist__dot" aria-hidden="true"></span>Fonte de 12 V
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Protoboard 830 pontos
+              <span class="checklist__dot" aria-hidden="true"></span>Protoboard, fios e conectores
             </li>
             <li class="checklist__item">
-              <span class="checklist__dot" aria-hidden="true"></span>Kit de jumpers macho/fêmea
+              <span class="checklist__dot" aria-hidden="true"></span>Estrutura de suporte
             </li>
           </ul>
         </div>
@@ -190,10 +188,9 @@
         <div class="container">
           <div class="section-head">
             <span class="eyebrow">PASSO A PASSO</span>
-            <h2 class="t-h2">Quatro passos até a cozinha protegida</h2>
+            <h2 class="t-h2">Quatro etapas da demonstração</h2>
             <p class="t-body-m lede">
-              Siga na ordem abaixo. Cada etapa leva poucos minutos e não exige
-              ferramentas especiais.
+              Execute os testes com o circuito desenergizado durante a montagem e com supervisão. A demonstração não substitui um sistema certificado de segurança para GLP.
             </p>
           </div>
 
@@ -203,12 +200,11 @@
               <span class="step-card__num" aria-hidden="true">01</span>
               <div class="step-card__media">
                 <img src="../assets/img/Instruções/Card/Imagem.svg"
-                     alt="Registro do botijão de gás sendo fechado">
+                     alt="Estrutura de montagem do protótipo SafeGas">
               </div>
-              <h3 class="step-card__title">Feche o registro do botijão</h3>
+              <h3 class="step-card__title">1. Monte o módulo da cozinha</h3>
               <p class="step-card__body">
-                Antes de qualquer instalação, feche o registro de gás do botijão
-                por segurança.
+                Conecte o MQ-2 ao ESP32 #2, instale o buzzer e os indicadores quando disponíveis. Use divisor de tensão no sinal analógico se necessário e mantenha o circuito sem GLP.
               </p>
             </li>
 
@@ -216,12 +212,11 @@
               <span class="step-card__num" aria-hidden="true">02</span>
               <div class="step-card__media">
                 <img src="../assets/img/Instruções/Card/Imagem-1.svg"
-                     alt="Válvula solenoide conectada ao módulo relé">
+                     alt="Módulo central com relé e atuador pneumático">
               </div>
-              <h3 class="step-card__title">Instale a válvula solenoide</h3>
+              <h3 class="step-card__title">2. Monte o módulo central</h3>
               <p class="step-card__body">
-                Encaixe a válvula solenoide na saída do botijão, conectando-a ao
-                módulo relé do SmartGás Shield.
+                Ligue HX711 e célula de carga ao ESP32 #1. Conecte o relé à FA0520E e à fonte de 12 V conforme o circuito experimental; a bomba produz apenas fluxo de ar.
               </p>
             </li>
 
@@ -229,12 +224,11 @@
               <span class="step-card__num" aria-hidden="true">03</span>
               <div class="step-card__media">
                 <img src="../assets/img/Instruções/Card/Imagem-2.svg"
-                     alt="Plugue da fonte de alimentação e tomada">
+                     alt="Célula de carga e módulo HX711 em uma plataforma">
               </div>
-              <h3 class="step-card__title">Ligue na tomada</h3>
+              <h3 class="step-card__title">3. Faça tara e calibração</h3>
               <p class="step-card__body">
-                Conecte a fonte de alimentação e ligue o dispositivo — o sensor MQ-2
-                inicia o aquecimento automático.
+                Com a plataforma vazia, execute `tare`. Depois aplique um peso conhecido e execute `calibrate <kg>`. A massa total medida não é automaticamente a massa de gás.
               </p>
             </li>
 
@@ -242,15 +236,43 @@
               <span class="step-card__num" aria-hidden="true">04</span>
               <div class="step-card__media">
                 <img src="../assets/img/Instruções/Card/Imagem-3.svg"
-                     alt="Celular exibindo o painel do aplicativo SmartGás">
+                     alt="Painel web exibindo telemetria do SafeGas">
               </div>
-              <h3 class="step-card__title">Conecte ao aplicativo</h3>
+              <h3 class="step-card__title">4. Teste comunicação e estados</h3>
               <p class="step-card__body">
-                Abra o app, encontre o dispositivo na rede e finalize o pareamento
-                para acompanhar os alertas.
+                Verifique ESP-NOW entre os módulos, MQTT do ESP32 #1 e os tópicos de telemetria. Teste a válvula com ar: sem bobina, o ar sai pelo bocal metálico (OPEN); energizada, o bocal metálico bloqueia e o ar é desviado ao bocal plástico (CLOSED).
               </p>
             </li>
           </ol>
+        </div>
+      </section>
+
+      <section class="section" id="limites-e-comunicacao">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">COMO INTERPRETAR</span>
+            <h2 class="t-h2">Dados, válvula e limites do protótipo</h2>
+            <p class="t-body-m lede">
+              O ESP32 #2 envia as leituras do MQ-2 ao ESP32 #1 por ESP-NOW. Apenas o ESP32 #1 conversa com o backend por Wi-Fi e MQTT, usando os tópicos <code>safe-gas/esp1/telemetry</code>, <code>safe-gas/esp1/status</code>, <code>safe-gas/esp1/commands</code> e <code>safe-gas/esp1/commands/ack</code>.
+            </p>
+          </div>
+          <div class="grid-3">
+            <article class="card">
+              <span class="card__icon" aria-hidden="true">M</span>
+              <h3 class="t-h4">Massa total e tara</h3>
+              <p class="t-body-s card__body">A balança mede tudo que está sobre a plataforma. A tara corresponde à estrutura/recipiente; subtraí-la produz uma massa estimada do conteúdo, não uma medição direta de GLP.</p>
+            </article>
+            <article class="card">
+              <span class="card__icon" aria-hidden="true">V</span>
+              <h3 class="t-h4">Estados da FA0520E</h3>
+              <p class="t-body-s card__body">OPEN é a bobina desenergizada, com passagem pelo bocal metálico. CLOSED é a bobina energizada, bloqueando esse bocal e desviando o ar ao bocal plástico.</p>
+            </article>
+            <article class="card">
+              <span class="card__icon" aria-hidden="true">!</span>
+              <h3 class="t-h4">Limitação de segurança</h3>
+              <p class="t-body-s card__body">A FA0520E não é certificada para GLP e retorna ao estado desenergizado quando perde energia. O circuito usa somente ar atmosférico e não é equipamento residencial.</p>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -300,8 +322,7 @@
             <span class="eyebrow">DEMONSTRAÇÃO</span>
             <h2 class="t-h2">Veja o sistema funcionando na prática</h2>
             <p class="t-body-m lede">
-              O vídeo abaixo percorre exatamente os quatro passos deste manual, do
-              registro fechado até o primeiro alerta chegando no celular.
+              O vídeo abaixo mostra a montagem experimental, o fluxo de ar pela válvula, a leitura da balança e a chegada da telemetria ao painel.
             </p>
           </div>
 
@@ -312,8 +333,8 @@
                  existir. Apague este bloco quando o vídeo entrar. -->
             <div class="video-player__placeholder">
               <span class="video-player__badge" aria-hidden="true"></span>
-              <p class="video-player__title">Espaço reservado para o vídeo demonstrativo</p>
-              <p class="video-player__meta">1920 × 1080 · 16:9 · MP4 · duração estimada 2 min</p>
+              <p class="video-player__title">Espaço reservado para a demonstração</p>
+              <p class="video-player__meta">Montagem experimental · ar atmosférico · telemetria do SafeGas</p>
             </div>
 
             <!-- Camada de cima: o vídeo de verdade. -->
