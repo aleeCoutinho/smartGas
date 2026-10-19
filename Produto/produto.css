@@ -35,10 +35,13 @@
 .material__container img {
   display: block;
   width: 100%;
-  height: 140px;
+  height: 150px;
   object-fit: contain;
   margin-bottom: var(--space-3);
-  background-color: white;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .item__title {
